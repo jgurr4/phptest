@@ -1,0 +1,1 @@
+docker run --rm -v ~/phptest/mysqldata:/var/lib/mysql --name mysql -p 8886:3306 -e MYSQL_ROOT_PASSWORD=super03 -d mysql:8.0.23

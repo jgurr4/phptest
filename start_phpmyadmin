@@ -1,0 +1,8 @@
+docker run --name phpmyadmin -d --rm --link mysql:user -p 8899:80 -v /home/jaredgurr/php/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php -e PMA_ARBITRARY=1 phpmyadmin/phpmyadmin
+
+#explanation:
+#PMA_ARBITRARY=1 environment allows you to specify the ipaddress:port to connect to.
+#mysql:user makes mysql automatically use the user database by default.
+#First run the start_mysql and start_phpmyadmin scripts. Then go to http://localhost:8899
+#For server type the ipaddress of your computer(use 'ifconfig wlp4s0' to find it) followed by port number. Example: 192.168.x.xx:8886
+#For username put root for first time. Then do whatever password you chose inside start_mysql. And that's it!
