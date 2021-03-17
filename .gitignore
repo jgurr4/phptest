@@ -53,3 +53,4 @@ build
 **/tags
 **/node_modules
 **/mysqldata
+**/mysql-data
