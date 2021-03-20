@@ -1,4 +1,4 @@
-docker run --name phpmyadmin -d --rm --link mysql -p 8899:80 -v /home/jaredgurr/php/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php -e PMA_ARBITRARY=1 phpmyadmin/phpmyadmin
+docker run --name phpmyadmin -d --rm --link mysql -p 8899:8080 -v /home/jaredgurr/php/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php -e PMA_ARBITRARY=1 phpmyadmin/phpmyadmin
 
 #explanation:
 #PMA_ARBITRARY=1 environment allows you to specify the ipaddress:port to connect to.

@@ -1,0 +1,11 @@
+Here is a test script to insert one new item to the database:
+ 
+insert into supplies values ('shaping stone','stone',null,'This is any stone which you can shape by hand through knapping or some other method.');
+insert into method values (0,'hand grinding stone','shaping stone','shaping stone, 'river rock', water','Requires no tools','Requires a source of shaping stone','1: Take a proper sized shaping rock and grind it on a good sized river rock with water on it. You need to use water to prevent dust getting into your lungs. Keep grinding the faces of the shaping stone until you get the shape you want.');
+insert into task(0,'Make a Stone Axe','B','boss','To cut down trees for wood',1);
+insert into resources values ('quarry','shaping stone, rock, clay, sand, dirt, limestone, minerals, ores, gems, water, oil','n',12);
+insert into source values (1,'something.com');
+ 
+ 
+Here is how to fix the order of things when I realize something needs to be added before something else:
+

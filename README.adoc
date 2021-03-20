@@ -19,7 +19,7 @@ To start PHPMyAdmin container:
 ./start_phpmyadmin
 ```
 
-== Building
+== Building using individual docker containers:
 
 To use PHPMyAdmin inside browser:
 ```

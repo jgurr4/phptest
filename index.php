@@ -28,7 +28,6 @@ $sql = "";
     <input type="text" name="email" placeholder="E-mail">
     <br>
     <button type="submit" name="submit">signup</button>
-
 </form>
 </body>
 </html>

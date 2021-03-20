@@ -6,7 +6,7 @@ services:
       context: .
     restart: always
     volumes:
-      - "/home/jaredgurr/phptest/:/var/www/html/"
+      - "~/phptest/:/var/www/html/"
     ports:
       - "8080:80"
   mysql-server:
@@ -15,7 +15,9 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: super03
     volumes:
-      - /home/jaredgurr/phptest/mysql-data:/var/lib/mysql
+      - ~/phptest/mysqldata:/var/lib/mysql
+    ports:
+      - "3306:3306"
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.1.0
@@ -27,4 +29,4 @@ services:
     ports:
       - "5000:80"
 volumes:
-  mysql-data:
+  mysqldata:
