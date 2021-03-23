@@ -1,11 +1,192 @@
-Here is a test script to insert one new item to the database:
- 
+Add this to git file:
+How to remove untracked files so the repo is clean just like it was before any changes occured:
+
+First check if any untracked files exist:
+git status
+
+now if any exist use this command to erase them:
+git clean -df
+
+You can also try 
+git reset --hard HEAD  //to undo changes to files.
+
+Now check again if there are any differences between local repo and most recent commit/pull:
+git status
+Add group_concat to mysql reservedWords and also add more things from practiceMysql page to it as well. It is useful to work with creating a multi-value column in results for some columns that list a value repeatedly. 
+see https://stackoverflow.com/questions/4609753/mysql-join-with-multiple-values-in-one-column
+
+MYSQL:
+MYSQL INSERT INTO DATABASE:
 insert into supplies values ('shaping stone','stone',null,'This is any stone which you can shape by hand through knapping or some other method.');
 insert into method values (0,'hand grinding stone','shaping stone','shaping stone, 'river rock', water','Requires no tools','Requires a source of shaping stone','1: Take a proper sized shaping rock and grind it on a good sized river rock with water on it. You need to use water to prevent dust getting into your lungs. Keep grinding the faces of the shaping stone until you get the shape you want.');
 insert into task(0,'Make a Stone Axe','B','boss','To cut down trees for wood',1);
 insert into resources values ('quarry','shaping stone, rock, clay, sand, dirt, limestone, minerals, ores, gems, water, oil','n',12);
 insert into source values (1,'something.com');
  
- 
+FIX ORDER AFTER INSERT:
 Here is how to fix the order of things when I realize something needs to be added before something else:
+ -> It's impossible if you set the order based on auto_incrementing int column. You have to use a normal column called 'order' which allows you to order everything yourself, and then you can update it all at once with a single command.
 
+Here is an example:
+
+task:
+order_no
+description
+rank
+user_author
+purpose
+method_ids
+
+Add new task in middle of task table:
+INSERT INTO task VALUES (15, 'build a kayak','C','boss','To cross rivers and streams','3 4 6')  
+
+Here is how to do queries for this sort of thing: SELECT * FROM task WHERE method_ids LIKE '%4%';
+Here is how to do joins for this sort of thing: SELECT * FROM task INNER JOIN method ON (method_ids LIKE '%' + id + '%'); //I still have to test this and see if it works.
+//ask mentor about how to do relation for multiple methods in task, and how to do table joins on something like this.) I guess you could just do it manually, but yeah I don't see how to do table joins, and also if I needed to use foreign key for some reason, how would you insert multiple foreign key values inside one record of another table? 
+For example I have to insert multiple method ids into one single task row.
+
+Update the values after that task you added:
+UPDATE task set order_no = order_no + 1 WHERE order_no >= 15;   //This should update all the order numbers that are 15 or higher so now it's ok if I need to insert a new one in the middle that I didn't know about before. You should try this with a temporary table with auto_increment columns just to see if it works.
+
+MYSQL requirements testing:
+1. Updating entire task table when I add or remove something:
+UPDATE task set order_no = order_no + 1 WHERE order_no >= 15;
+
+2. Selecting a specific method:
+SELECT * FROM method WHERE name = "hand grind stone";
+
+3. selecting a specific task:
+SELECT * FROM task WHERE description = "Make a Stone Axe";
+
+4. selecting a list of methods based on completed requirements:
+SELECT * FROM method WHERE required_mat = 'shaping stone' OR required_tools = 'water' OR 'required_tools = 'river rock';
+
+5. selecting a list of tasks based on completed methods:
+SELECT * FROM task WHERE method_ids = ANY (SELECT id FROM method WHERE name = 'hand grind stone');
+
+6. selecting a task, method, supply and resource all at once which leads to requirements being satisfied for next task:
+SELECT * FROM task WHERE order = 100;
+//obtain the method ids for current task.
+
+SELECT * FROM method WHERE id = ANY (SELECT method_ids FROM task WHERE order = 100);
+//obtain method ids for current task and use that to find out what methods need to be done.
+or if you know the method ids already:
+SELECT * FROM method WHERE id = 1 OR id = 3 OR id = 5;
+
+SELECT * FROM supply WHERE name = ANY (SELECT required_mat, required_tools, optional_mat, optional_tools FROM method WHERE id = ANY (SELECT method_ids FROM task WHERE order = 100));
+//Find out the supplies required by the methods which are required to accomplish the task, as well as optional supplies.
+or if you know the supplies required already:
+SELECT * FROM supply WHERE name = 'shaping stone' OR name = 'water' OR name = 'river rock';
+NOTE: This is optional since looking up the supplies is only required if you want a explanation about what a material is and what it does. you can skip to the resources section.
+
+SELECT * FROM resource WHERE supplies_provided LIKE '%river rock%' OR supplies_provided LIKE '%shaping stone%' OR supplies_provided LIKE '%water%';
+//Find out what resources can be used to obtain certain supply materials/tools. For example a beehive provides wax, honey and royal jelly.
+NOTE: This is the required way to search for something that is in a list format in mysql. Since It's like a one to many-many relationship.
+
+7. selecting a next task based on what resources I already have which may or may not be all the required ones:
+SELECT * FROM task WHERE method_ids = ANY (SELECT id FROM method WHERE required_mat = ANY (SELECT name FROM supply WHERE name = ANY (SELECT supplies_provided FROM resource WHERE name = 'beehive')) AND required_tools = ANY (SELECT name FROM supply WHERE name = ANY (SELECT supplies_provided FROM resource WHERE name = 'beehive')));
+
+8. selecting a next task based on what supplies I already have which may or may not be all the required ones:
+SELECT * FROM task WHERE method_ids = ANY (SELECT id FROM method WHERE required_mat = ANY (SELECT name FROM supply WHERE name = 'shaping stone' AND name = 'river rock' AND name = 'water') AND required_tools = ANY (SELECT name FROM supply WHERE name = 'shaping stone' AND name = 'river rock' AND name = 'water'));
+
+9. selecting a next task based on what methods I already have which may or may not be all the required ones:
+SELECT * FROM task WHERE method_ids = ANY (SELECT id FROM method WHERE required_mat = 'shaping stone' AND required_tools = 'river rock');
+
+10. selecting a next task based on what tasks I've already completed which may or may not be all the required ones:
+SELECT * FROM task WHERE order = 100 + 1;
+
+11. select a list of tasks after the last task I completed:
+SELECT * FROM task WHERE order > 100;
+
+12. select all the required tools/materials and optional tools/materials of a specific method:
+SELECT required_tools, required mat, optional_tools, optional_mat FROM method WHERE id = 100;
+
+13. select all the resources which provide a specific supply:
+SELECT name FROM resource WHERE supplies_provided LIKE '%beeswax%';
+NOTE: Perhaps you can make supplies_provided a fulltext index for fulltext searching. I'll try that and see how it changes things.
+
+14. select a list of all the supplies that exist.
+SELECT name FROM supply;
+
+15. updating method and source table after deleting two records and inserting one new one.
+DELETE FROM method WHERE id = 101 AND id = 102;    //There should be a trigger set up to automatically delete the sources attached to these id's. If not then use this command right after:
+DELETE FROM source WHERE method_id = 101 AND method_id = 102;
+
+then do:
+ALTER TABLE method SET auto_increment = 101;
+INSERT INTO method VALUES (...);
+INSERT INTO source VALUES (...);
+
+16. Select a method based on a task you need to complete:
+SELECT * FROM task inner join method on (id LIKE method_ids) WHERE name LIKE '%cross rivers%';
+//NOTE: Ask mentor about how to do joins on a column that has records which each can have 1 or more values from the other column. See above for my attempt at it.
+
+COUCHBASE:
+COUCHBASE INSERT INTO DOCUMENT STORE:
+
+tasks document store:
+{
+	"Make a Stone Axe" : {
+		"order_no": 1,
+		"rank" : "b",
+		"user_author" : "boss",
+		"purpose" : "To cut down trees for wood",
+		"required method ids" : [0, 3, 5] } }
+
+method document store:
+{
+	"hand grind stone" : {
+		"required material" : "shaping stone",
+		"required tool" : [ "river stone", "water"],
+		"pros": "requires no manmade tools",
+		"cons": "requires locating a source of shaping stone",
+		"instructions" : "Take a proper sized shaping rock and grind it on a good sized river rock with water on it. You need to use water to prevent dust getting into your lungs. Keep grinding the faces of the shaping stone until you get the shape you want.",
+		"source": "http://ifsaofjsd.com" } }
+
+supplies document store:
+{
+	"shaping stone": {
+		"base material" : "stone",
+		"description" : "This is any stone which you can shape by hand through knapping or some other method." } }
+
+resources document store:
+{
+	"quarry" : {
+		"supplies provided" : ["shaping stone", "rock", "clay", "sand", "dirt", "limestone", "minerals", "ores", "gems", "water", "oil"],
+		"renewable" : "no",
+		"total supplies" : 11 } }
+
+
+Now I need to figure out, what does inserting, querying, and updating look like with this sort of system in couchbase.
+
+COUCHBASE REQUIREMENTS TESTING:
+0. Updating when I add or remove something:
+UPDATE methods SET order_no = order_no + 1 WHERE order_no >= 15;
+
+1. Selecting a specific method:
+SELECT "shaping stone" FROM method;
+
+2. selecting a specific task:
+SELECT "Make a Stone Axe" FROM task;
+
+3. selecting a list of methods based on completed requirements:
+SELECT * FROM method WHERE "required material" = "shaping stone";
+
+4. selecting a list of tasks based on completed methods:
+SELECT * FROM task WHERE "method_ids" = [0 ,3, 5];
+
+5. selecting a task, method, supply and resource all at once which leads to requirements being satisfied for next task:
+
+SELECT * FROM task WHERE task = "Make a Stone Axe";
+//obtain required method ids from task as well as other info to show user.
+SELECT * FROM method WHERE id = [0, 3, 5];  
+//obtain required supplies for each method as well as other info to show user.
+SELECT * FROM supply WHERE supply = "Shaping stone" OR supply = "water" OR supply = "river stone";  
+//obtain information about all the supplies required for this task to show user. (not required)
+SELECT * FROM resource WHERE "supplies provided" = "shaping stone" OR "supplies provided" = "river rock" OR "supplies provided" = "water"; 
+//obtain the list of resources which can be used to obtain the required supplies for this task.
+
+
+6. selecting a next task based on what supplies I already have which may or may not be all the required ones:
+
+7. selecting a next task based on what tasks I've already completed which may or may not be all the required ones:
