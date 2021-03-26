@@ -14,15 +14,109 @@ Now check again if there are any differences between local repo and most recent 
 git status
 Add group_concat to mysql reservedWords and also add more things from practiceMysql page to it as well. It is useful to work with creating a multi-value column in results for some columns that list a value repeatedly. 
 see https://stackoverflow.com/questions/4609753/mysql-join-with-multiple-values-in-one-column
+==================================================
 
 MYSQL:
+
+
 MYSQL INSERT INTO DATABASE:
-insert into supplies values ('shaping stone','stone',null,'This is any stone which you can shape by hand through knapping or some other method.');
-insert into method values (0,'hand grinding stone','shaping stone','shaping stone, 'river rock', water','Requires no tools','Requires a source of shaping stone','1: Take a proper sized shaping rock and grind it on a good sized river rock with water on it. You need to use water to prevent dust getting into your lungs. Keep grinding the faces of the shaping stone until you get the shape you want.');
-insert into task(0,'Make a Stone Axe','B','boss','To cut down trees for wood',1);
-insert into resources values ('quarry','shaping stone, rock, clay, sand, dirt, limestone, minerals, ores, gems, water, oil','n',12);
-insert into source values (1,'something.com');
- 
+Simple version:
+
+ -> This version will allow the creation of a tech tree with the order of tasks and the level the task is at. (meaning how many tasks are required to complete this one task). 
+ -> It also saves the tasks which a user has completed, and what task is next on the list.
+ -> It also provides the proven method for getting it done in step-by-step instructions for completing the next task.
+ -> It also provides sources where you can learn more about the method used, and see it done for real in articles, youtube videos, images, wiki, etc...
+
+//NOTE: FL means (F)inish (L)ater. I have to look up certain things and go back to them later before I can insert them or if I insert them, so I can update them later.
+
+INSERT INTO user VALUES (0, 'boss','jared gurr',14781234,'something@gmail.com',null,default,default);
+
+INSERT INTO task VALUES (0, 'Make a stone axehead',1,'A','boss','Requirement for making stone axe.', 'Find a rough stone that is at least the size of two of your fists put together. Use a river or any other source of water to get the flatest surface of the rock wet. Then use some shaping stone on it, and begin rubbing the shaping stone on the wet rock. Keep rubbing until you get the shape of an axehead you want. ...FL');
+
+INSERT INTO task VALUES (0, 'Make plant cordage',2,'A','boss','Used in many things. Very helpful material.','Find a plant of this type or grass, take it in your hand and twist it repeatedly, and add more plant strands as you reach the end repeatedly. Continue until you have the length of cordage you want. double it if you want it thicker, though this will make it shorter too.');
+
+INSERT INTO task VALUES (0, 'Make a stone axe',3,'B','boss','To cut and shape wood, including obtaining wood from trees.', 'Grab the stone axehead you made in first task, and use it to hand chop or break off a branch off a tree. The branch should be long enough to make a two handed handle ideally so around the length between both your elbows when arms are stretched to side. Carve a hole in the wood  ...FL');
+
+INSERT INTO supply VALUES (0, 1, 'shaping stone', 'stone',null,'Shaping stone is any type of stone that you can shape using the hand grinding on a wet stone method.', 'Y', 'You can find it by simply taking rocks you find anywhere on the ground, in river, underground etc and test it by rubbing it against a stone with water/sand on it and see if it shapes well. If not, try a different type of rock. Some good rocks for this are shale rocks found in blah places.  ...FL');
+
+INSERT INTO source VALUES (1, 'something.com','somethingelse.com'),(2,'something2.com','somethingelse2.com'),(3,'something3.com','somethingelse3.com');
+
+INSERT INTO taskCompletion VALUES (1,1,default); //This means that user boss who has id 1 has finished the first task in the tech tree.
+
+
+==================================================
+Advanced version:
+
+ -> This version does everything the original version does plus:
+ -> It allows you to show alternative methods, supplies and resources for accomplishing a task.
+ -> For each method it will show you a list of required/optional materials and required/optional tools, as well as the pros and cons to each method. 
+ -> It shows you a list of supplies(materials or tools) with a description, and from which resources you can find them.
+ -> It shows you a list of resources with a list of all the possible supplies can be obtained which are part of a method somewhere in the database. (so not a list of all possible resources for all possible supplies. It's simply a list of all the supplies that are possible from a specific resource which is used in this tech tree.)
+
+ This version will be better in every way, but the simple version will be much faster for me to make right now, and later I'll work on getting the improved version built and sent out the door.
+
+Relationships in my advanced table:
+
+normal relations:
+1-many user to task
+ -> user.username is 1-many with task.user_author 
+
+1-many task to method
+ -> task.id is 1-many with method.task_id
+
+1-1 method to source
+ -> method.id is 1-1 with source.method_id
+
+Many-to-many relations: 
+
+task to method:
+ -> task.id is 1-many with task_method.task_id
+ -> method.id is 1-many with task_method.method_id
+
+method to supply:
+ -> method.id is 1-many with method_supply.method_id
+ -> supply.id is 1-many with method_supply.supply_id
+
+supply to resource:
+ -> supply.id is 1-many with supply_resource.supply_id
+ -> resource.id is 1-many with supply_resource.resource_id
+==================================================
+How to insert into this advanced version:
+
+A quarry can provide these supplies:
+'shaping stone, rock, clay, sand, dirt, limestone, minerals, ores, gems, water, oil'
+So it's important after you add a quarry to add these supplies to the list. and then add the ids to the supply_resource table.
+The hand grinding stone method requires shaping stone, river rock and water. So be sure to add those to the supply table and add a resource for them if it doesn't already exist as well. Then connect them using the supply_resource table.
+
+INSERT INTO resource VALUES (0, 'quarry','N');
+INSERT INTO resource VALUES (0, 'river','Y');
+
+INSERT INTO supply VALUES (0,'shaping stone','stone',null,'This is any stone which you can shape by hand through knapping or some other method.','Y');
+INSERT INTO supply VALUES (0, 'rock','stone',null,'Any type of rock, it doesn't matter','Y');
+INSERT INTO supply VALUES (0, 'clay','dirt',null,'The finest grain of soil/dirt which is mixed with water and grog, sand or straw etc and used for building and shaping into containers/bowls and other things. It is made waterproof by heating it inside a kiln.','Y');
+INSERT INTO supply VALUES (0, 'sand',null,'grains of sand are bigger than clay particles, but smaller than pebbles, sand is useful for many tasks.'Y');
+INSERT INTO supply VALUES (0, 'dirt','dirt',null,'Dirt refers to any soil with a mix of clay, sand, rocks, and oftentimes decomposing plant/animal matter.','Y');
+INSERT INTO supply VALUES (0, 'limestone','stone',null,'limestone is a type of rock which is crumbly and yellow-ish white. It is a prime material for making quick lye for cement making.','N');
+INSERT INTO supply VALUES (0, 'river rock','stone',null,'river rock is a smooth stone found in rivers or dry riverbeds.','Y');
+INSERT INTO supply VALUES (0, 'water','water',null,default,'Y');
+
+
+INSERT INTO method VALUES (0,'hand grinding stone','Requires no tools','Requires a source of shaping stone','Take a proper sized shaping rock and grind it on a good sized river rock with water on it. You need to use water because it will prevent dust getting into your lungs. Keep grinding the faces of the shaping stone until you get the shape you want.',1), (0,';
+
+INSERT INTO source VALUES (1, 'something.com', '/path/to/something');
+
+INSERT INTO supply_resource VALUES (1, 1, 'N'),(2, 1, 'N'),(3, 1, 'N'),(4, 1, 'N'),(5, 1, 'N'),(6, 1, 'N'),(7, 2, 'N'),(8, 2, 'Y');
+
+INSERT INTO method_supply VALUES (1, 1, 'Y',default),(1,7,'Y','tool'),(1,9,'Y','tool');
+//Don't forget you can add optional materials here if any exist.
+
+INSERT INTO task VALUES (0,'Make plant cordage',1), (0,'Make a Stone Axe',3,'B','boss','To obtain wood from trees.');
+
+INSERT INTO task_method VALUES (3,1,'Y'),(3,2,'Y);
+
+==================================================
+==================================================
+
 FIX ORDER AFTER INSERT:
 Here is how to fix the order of things when I realize something needs to be added before something else:
  -> It's impossible if you set the order based on auto_incrementing int column. You have to use a normal column called 'order' which allows you to order everything yourself, and then you can update it all at once with a single command.
@@ -40,8 +134,12 @@ method_ids
 Add new task in middle of task table:
 INSERT INTO task VALUES (15, 'build a kayak','C','boss','To cross rivers and streams','3 4 6')  
 
-Here is how to do queries for this sort of thing: SELECT * FROM task WHERE method_ids LIKE '%4%';
-Here is how to do joins for this sort of thing: SELECT * FROM task INNER JOIN method ON (method_ids LIKE '%' + id + '%'); //I still have to test this and see if it works.
+Here is how to do queries for this sort of thing: 
+SELECT * FROM task WHERE method_ids LIKE '%4%';
+
+Here is how to do joins for this sort of thing: 
+SELECT * FROM task INNER JOIN method ON (method_ids LIKE '%' + id + '%'); //I still have to test this and see if it works.
+
 //ask mentor about how to do relation for multiple methods in task, and how to do table joins on something like this.) I guess you could just do it manually, but yeah I don't see how to do table joins, and also if I needed to use foreign key for some reason, how would you insert multiple foreign key values inside one record of another table? 
 For example I have to insert multiple method ids into one single task row.
 
@@ -118,8 +216,21 @@ INSERT INTO method VALUES (...);
 INSERT INTO source VALUES (...);
 
 16. Select a method based on a task you need to complete:
-SELECT * FROM task inner join method on (id LIKE method_ids) WHERE name LIKE '%cross rivers%';
-//NOTE: Ask mentor about how to do joins on a column that has records which each can have 1 or more values from the other column. See above for my attempt at it.
+SELECT * FROM task INNER JOIN method ON (id = task_id) WHERE description LIKE '%stone axe%';
+
+17. Select a list of methods joined with the supply table so you can see description of each material/tool:
+SELECT * FROM method INNER JOIN method_supply ON (id = method_id) INNER JOIN supply on (supply_id = supply.id);
+
+18. Select a list of methods joined with the resource table so you can see which resources will provide each material/tool:
+SELECT * FROM method INNER JOIN method_supply ON (id = method_id) INNER JOIN supply ON (supply_id = supply.id) INNER JOIN resource ON (resource_id = resource.id);
+//Perhaps this method requires a cross join since the supply table is between these two tables.
+
+19. Get a list of all completed tasks and their date of completion for a specific user.
+//simple version:
+SELECT * FROM user INNER JOIN taskCompletion ON (id = user_id) INNER JOIN task ON (task_id = task.id);
+
+==================================================
+
 
 COUCHBASE:
 COUCHBASE INSERT INTO DOCUMENT STORE:
