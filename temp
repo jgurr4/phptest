@@ -29,20 +29,32 @@ Simple version:
 
 //NOTE: FL means (F)inish (L)ater. I have to look up certain things and go back to them later before I can insert them or if I insert them, so I can update them later.
 
-INSERT INTO user VALUES (0, 'boss','jared gurr',14781234,'something@gmail.com',null,default,default);
+INSERT INTO user VALUES (0, 'TheGuy','jared gurr',14781234,'something@gmail.com',null,default,default);
 
-INSERT INTO task VALUES (0, 'Make a stone axehead',1,'A','boss','Requirement for making stone axe.', 'Find a rough stone that is at least the size of two of your fists put together. Use a river or any other source of water to get the flatest surface of the rock wet. Then use some shaping stone on it, and begin rubbing the shaping stone on the wet rock. Keep rubbing until you get the shape of an axehead you want. ...FL');
+INSERT INTO task VALUES (0, 'Make a stone axehead',default,default,default,'TheGuy','Requirement for making stone axe.', 'Find a rough stone that is at least the size of two of your fists put together. Use a river or any other source of water to get the flatest surface of the rock wet. Then use some shaping stone on it, and begin rubbing the shaping stone on the wet rock. Keep rubbing until you get the shape of an axehead you want. ...FL');
 
-INSERT INTO task VALUES (0, 'Make plant cordage',2,'A','boss','Used in many things. Very helpful material.','Find a plant of this type or grass, take it in your hand and twist it repeatedly, and add more plant strands as you reach the end repeatedly. Continue until you have the length of cordage you want. double it if you want it thicker, though this will make it shorter too.');
+INSERT INTO task VALUES (0, 'Make plant cordage',default,default,default,'boss','Used in many things. Very helpful material.','Find a plant of this type or grass, take it in your hand and twist it repeatedly, and add more plant strands as you reach the end repeatedly. Continue until you have the length of cordage you want. double it if you want it thicker, though this will make it shorter too.');
 
-INSERT INTO task VALUES (0, 'Make a stone axe',3,'B','boss','To cut and shape wood, including obtaining wood from trees.', 'Grab the stone axehead you made in first task, and use it to hand chop or break off a branch off a tree. The branch should be long enough to make a two handed handle ideally so around the length between both your elbows when arms are stretched to side. Carve a hole in the wood  ...FL');
+INSERT INTO task VALUES (0, 'Make a stone axe',default,default,'B','boss','To cut and shape wood, including obtaining wood from trees.', 'Grab the stone axehead you made in first task, and use it to hand chop or break off a branch off a tree. The branch should be long enough to make a two handed handle ideally so around the length between both your elbows when arms are stretched to side. Carve a hole in the wood  ...FL');
 
 INSERT INTO supply VALUES (0, 1, 'shaping stone', 'stone',null,'Shaping stone is any type of stone that you can shape using the hand grinding on a wet stone method.', 'Y', 'You can find it by simply taking rocks you find anywhere on the ground, in river, underground etc and test it by rubbing it against a stone with water/sand on it and see if it shapes well. If not, try a different type of rock. Some good rocks for this are shale rocks found in blah places.  ...FL');
 
-INSERT INTO source VALUES (1, 'something.com','somethingelse.com'),(2,'something2.com','somethingelse2.com'),(3,'something3.com','somethingelse3.com');
+INSERT INTO source VALUES (1, 'https://www.youtube.com/watch?v=BN-34JfUrHY','https://www.youtube.com/watch?v=Wvw1xm9Y7nE', null, null, null, null),(2,'https://www.youtube.com/watch?v=ZEl-Y1NvBVI', default, default, default, default),(3,'https://www.youtube.com/watch?v=BN-34JfUrHY', default, default, default, 'source #1 shows how to get plant cordage in middle of video.');
 
 INSERT INTO taskCompletion VALUES (1,1,default); //This means that user boss who has id 1 has finished the first task in the tech tree.
 
+NOTE: The order column is for specifying the order of the tech tree for people who are starting from scratch out in the wilderness (a very rare case).
+The cityOrder column is for people who already live in a normal city, and can recycle many useful materials such as wood, plastics, plastic bottles, glass, and metals. Not only that, but if they choose to, they can purchase some extremely useful items which would make a lot of devices way easier or more effective. But I'll only make that table and start filling it once I find something that I believes fits in that category based on what the machines I design need.
+
+TODO: After I finish setting up the database, I will download every single video from the database that I use as a source, because they can often be taken down by the original user or by youtube, so I have to make sure and protect against that, otherwise many people in the future could be absolutely stuck without sources to learn more or for how to follow these instructions more effectively.
+TODO: Also after I actually finish developing the app, I'll transfer everything to mariadb - Aria and follow some guides about migrating all tables to aria because my main goal here is to practice with innodb/myisam mysql inside php. I'll practice Mariadb/Aria later. 
+
+So just to be clear. the app will be developed entirely with innodb. Then after I finish making the app before I publish it, I'll change everything to mariadb/aria and then make sure all my tests still work. 
+
+
+Things I learned so far from this experience:
+ -> Text cannot be given a default value.
+ -> You can do relationships between tables whether they are innodb or myisam. The only difference is that innodb can use foreign key constraints, but myisam cannot. But neither always needs them.
 
 ==================================================
 Advanced version:

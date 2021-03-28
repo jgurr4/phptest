@@ -1,6 +1,6 @@
 = phptest
 
-== Mysql Config
+== Building using individual docker containers:
 
 To start MySQL container:
 ```
@@ -12,27 +12,11 @@ Setup MySQL Databases, Tables and Users (run only once):
 ./setup_mysql
 ```
 
-== PHPMyAdmin Config
-
 To start PHPMyAdmin container:
 ```
 ./start_phpmyadmin
 ```
 
-== Building using individual docker containers:
-
-To use PHPMyAdmin inside browser:
-```
-http://localhost:8899
-server: ipaddress:8886
-username: whatever you use in mysql scripts
-password: whatever you use in mysql scripts
-```
-
-To View/Use app inside browser:
-```
-...
-```
 
 == Building using docker-compose:
 
@@ -46,9 +30,16 @@ To use phpmyadmin in browser:
 localhost:5000
 ```
 
+To login to PHPMyAdmin inside browser:
+```
+http://localhost:8899
+server: ipaddress:8886
+username: whatever you use in mysql scripts
+password: whatever you use in mysql scripts
+```
+
 To view/use app inside browser:
 ```
 localhost:8080
 ```
-
 

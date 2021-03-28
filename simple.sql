@@ -4,17 +4,20 @@ USE phptest;
 
 CREATE TABLE `task` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `name` text NOT NULL,
-	`order` int(10) unsigned NOT NULL,
+    `title` varchar(255) UNIQUE NOT NULL,
+	`order` int(10) unsigned,
+    `cityOrder` int(10) unsigned,
 	`rank` enum('A','B','C','D','E','F','G','H') NOT NULL DEFAULT 'A',
 	`user_author` varchar(40) NOT NULL,
 	`purpose` text NOT NULL,
+	`instructions` text NOT NULL,
 	PRIMARY KEY (`id`)
-) ENGINE MyISAM;
+) ENGINE InnoDB;
 
 CREATE TABLE `user` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL,
+  `name` varchar(50) not null,
   `password` varchar(40) NOT NULL,
   `email` varchar(50) NOT NULL,
   `phone` varchar(15) DEFAULT NULL,
@@ -23,34 +26,26 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `username` (`username`)
-) ENGINE MyISAM;
-
-CREATE TABLE `method` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
-  `pros` text,
-  `cons` text,
-  `instructions` text NOT NULL,
-  `task_id` int unsigned,
-  PRIMARY KEY (`id`)
-) ENGINE MyISAM;
+) ENGINE InnoDB;
 
 CREATE TABLE `supply` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `task_id` int unsigned,
   `name` varchar(50) NOT NULL,
   `base_material` varchar(50) NOT NULL,
   `secondary_material` varchar(50) DEFAULT NULL,
-  `description` text DEFAULT '',
+  `description` text,
   `common` enum('Y','N') DEFAULT 'N',
+  `howToGet` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE MyISAM;
+) ENGINE InnoDB;
 
-CREATE TABLE `resource` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
-  `description` text DEFAULT '',
-  PRIMARY KEY (`id`)
-) ENGINE MyISAM;
+CREATE TABLE taskCompletion(
+  `user_id` int unsigned,
+  `task_id` int unsigned,
+  `dateCompleted` datetime not null default current_timestamp,
+  PRIMARY KEY (`user_id`, `task_id`)
+ ) ENGINE InnoDB;
 
 CREATE TABLE `source` (
   `method_id` int(10) unsigned DEFAULT NULL,
@@ -58,5 +53,6 @@ CREATE TABLE `source` (
   `source2` text,
   `source3` text,
   `source4` text,
-  `source5` text
-) ENGINE MyISAM;
+  `source5` text,
+  `extraInfo` text
+) ENGINE InnoDB;

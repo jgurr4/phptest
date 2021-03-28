@@ -16,6 +16,8 @@ services:
       MYSQL_ROOT_PASSWORD: super03
     volumes:
       - ~/phptest/mysqldata:/var/lib/mysql
+      - ~/phptest/simple.sql:/simple.sql
+      - ~/phptest/advanced.sql:/advanced.sql
     ports:
       - "3306:3306"
 
