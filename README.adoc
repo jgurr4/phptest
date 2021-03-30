@@ -12,6 +12,12 @@ Setup MySQL Databases, Tables and Users (run only once):
 ./setup_mysql
 ```
 
+To change php default credentials for mysqli:
+```
+edit php.ini at bottom of page under
+[mysqli connection config]
+```
+
 To start PHPMyAdmin container:
 ```
 ./start_phpmyadmin

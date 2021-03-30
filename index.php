@@ -6,21 +6,50 @@
 </head>
 <body>
 <?php
-$dbhost = 'localhost:3306';
-$dbuser = 'root';
-$dbpass = 'super03';
-$dbdatabase = 'phptest';
-$mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbdatabase, 8886);
 
 
-#if(! $conn ){
-#    echo 'Connected failure\n';
-#}
-#echo 'Connected successfully\n';
+define("MYSQL_CONN_ERROR", "Unable to connect to database.");
+$_PHP_SELF = $_SERVER["PHP_SELF"];
 
-$sql = "";
+// Ensure reporting is setup correctly
+mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
+
+// Connect function for database access
+function connect($usr,$pw,$db,$host,$sql) {
+    try {
+        $mysqli = new mysqli($host,$usr,$pw,$db);
+        if (mysqli_connect_errno()) {
+            printf("Connect failed: %s\n", mysqli_connect_error());
+            exit();
+        }
+
+        $result = $mysqli->query($sql);
+        $row = $result->fetch_assoc();
+        /* How to return specific columns from multiple rows. */
+        while ($row = $result->fetch_assoc()) {
+            printf("%s (%s)\n", $row["id"], $row["title"]);
+        }
+        echo $row;
+    } catch (mysqli_sql_exception $e) {
+        throw $e;
+    }
+}
+
+try {
+    connect('root','super03','phptest','127.0.0.1','SELECT * FROM task');
+    echo 'Connected to database';
+} catch (Exception $e) {
+    echo $e->getMessage() . "\n";
+    echo $e->getCode() . "\n";
+    echo $e->getTraceAsString() . "\n";
+}
+
+$query ="SELECT * FROM task";
+
 ?>
-<form action="index.php" method="post">
+<hr>
+<br>
+<form action="<?php $_PHP_SELF ?>" method="post">
     <input type="text" name="uid" placeholder="Username">
     <br>
     <input type="text" name="password" placeholder="password">
