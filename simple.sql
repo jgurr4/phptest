@@ -18,7 +18,7 @@ CREATE TABLE `user` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL,
   `name` varchar(50) not null,
-  `password` varchar(40) NOT NULL,
+  `password` mediumint unsigned NOT NULL,
   `email` varchar(50) NOT NULL,
   `phone` varchar(15) DEFAULT NULL,
   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -56,3 +56,69 @@ CREATE TABLE `source` (
   `source5` text,
   `extraInfo` text
 ) ENGINE InnoDB;
+
+CREATE VIEW `userLastCompletedTask` AS
+    SELECT username, t1.*
+    FROM taskCompletion t1 INNER JOIN user ON (id = user_id)
+    WHERE t1.dateCompleted = (SELECT MAX(t2.dateCompleted)
+    FROM taskCompletion t2
+    WHERE t2.user_id = t1.user_id);
+
+DELIMITER //
+CREATE PROCEDURE getNextTask(IN u1 VARCHAR(50))
+BEGIN
+    SELECT * FROM task WHERE id = (SELECT task_id from userLastCompletedTask WHERE username = u1) + 1;
+END //
+
+CREATE PROCEDURE addComplete(IN uname VARCHAR(50), IN tid int unsigned)
+BEGIN
+    set @uid = (SELECT id FROM user WHERE username = uname);
+    INSERT INTO taskCompletion VALUES (@uid, tid, default);
+END //
+
+CREATE PROCEDURE removeComplete(IN uname VARCHAR(50), IN tid int unsigned)
+BEGIN
+    SET @uid = (SELECT id FROM user WHERE username = uname);
+    DELETE FROM taskCompletion WHERE user_id = @uid AND task_id = tid;
+END //
+
+CREATE PROCEDURE createNewUser(
+    IN username VARCHAR(50), IN name varchar(50), IN pass MEDIUMINT UNSIGNED, IN email VARCHAR(50), IN phone VARCHAR(15))
+BEGIN
+    INSERT INTO user VALUES (0, username, name, pass, email, phone, default, default);
+END //
+
+CREATE PROCEDURE retrieveUser(IN uname VARCHAR(50), IN pass mediumint unsigned)
+BEGIN
+    SELECT * FROM user WHERE username = uname AND password = pass;
+END //
+
+CREATE PROCEDURE updateUser(
+    IN uname VARCHAR(50), IN newUName VARCHAR(50), IN name varchar(50), IN pass MEDIUMINT UNSIGNED, IN email VARCHAR(50), IN phone VARCHAR(15))
+BEGIN
+    SET @uid = (SELECT `id` FROM `user` WHERE username = uname);
+    REPLACE INTO user VALUES (@uid, newUName, name, pass, email, phone, default, default);
+END //
+
+CREATE PROCEDURE deleteUser(IN uname VARCHAR(50), IN pass mediumint unsigned)
+BEGIN
+    SET @uid = (SELECT id FROM user WHERE username = uname AND password = pass);
+    DELETE FROM user WHERE username = uname AND password = pass;
+    DELETE FROM taskCompletion WHERE user_id = @uid;
+    UPDATE user SET id = id - 1 WHERE id > @uid;
+    SET @newInc = (SELECT max(id) FROM user) + 1;
+    set @sql = concat('alter table user auto_increment = ', @newInc);
+    prepare stmt from @sql;
+    execute stmt;
+    deallocate prepare stmt;
+END //
+DELIMITER ;
+
+CREATE ROLE IF NOT EXISTS 'app', 'developer','administrator';
+GRANT ALL ON *.* TO 'administrator';
+GRANT INSERT, UPDATE, DELETE ON phptest.* TO 'developer';
+GRANT EXECUTE ON phptest.* TO 'app';
+CREATE USER IF NOT EXISTS 'jared'@'localhost' IDENTIFIED BY 'super03';
+CREATE USER IF NOT EXISTS 'app'@'localhost' IDENTIFIED BY 'password';
+GRANT 'app' TO 'app'@'localhost';
+GRANT 'administrator' TO 'jared'@'localhost';
