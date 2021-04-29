@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>login</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
-<body>
-<form action="mysql.php" method="post">
+<body id="message">
+<form>
     <input type="text" name="name" placeholder="name">
     <br>
     <input type="text" name="uid" placeholder="Username">
@@ -16,7 +17,17 @@
     <br>
     <input type="text" name="phone" placeholder="phone number(optional)">
     <br>
-    <button type="submit" name="submit">signup</button>
+    <button id="driver" type="submit" name="submit">signup</button>
 </form>
+
+<script type="text/javascript" language="JavaScript">
+    $(document).ready(function() {
+       $("#driver").click(function(event) {
+          let name = $("#message").val();
+          $("#stage").load('/mysql.php', {"message":message} );
+       });
+    });
+</script>
+
 </body>
 </html>

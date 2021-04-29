@@ -23,9 +23,13 @@ $sql = "CALL createNewUser('$username', '$name', '$password', '$email', '$phone'
 $result = $mysqli->query($sql);
 
 // refreshes the page.
-$location = '/index.html';
-header("Location:$location");
+/*$location = '/index.html';
+header("Location:$location");*/
+//Load the new html in the page:
+echo 'You have successfully created your account.' ;
 exit();
+
+
 /*$row = $result->fetch_assoc() or die(mysql_error());
 echo $row;*/
 
