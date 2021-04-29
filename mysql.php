@@ -18,11 +18,16 @@ $dbuser = 'root';
 $dbpass = 'super03';
 $dbdatabase = 'phptest';
 $mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbdatabase, 3306);
-$sql = "INSERT INTO user VALUES (default, $username, $name, $password, $email, $phone, default, default)";
+$sql = "CALL createNewUser('$username', '$name', '$password', '$email', '$phone')";
 
 $result = $mysqli->query($sql);
-$row = $result->fetch_assoc();
-echo $row;
+
+// refreshes the page.
+$location = '/index.html';
+header("Location:$location");
+exit();
+/*$row = $result->fetch_assoc() or die(mysql_error());
+echo $row;*/
 
 
 // Connect function for database access

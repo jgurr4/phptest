@@ -83,24 +83,24 @@ BEGIN
 END //
 
 CREATE PROCEDURE createNewUser(
-    IN username VARCHAR(50), IN name varchar(50), IN pass MEDIUMINT UNSIGNED, IN email VARCHAR(50), IN phone VARCHAR(15))
+    IN username VARCHAR(50), IN name varchar(50), IN pass VARCHAR(255), IN email VARCHAR(50), IN phone VARCHAR(15))
 BEGIN
     INSERT INTO user VALUES (0, username, name, pass, email, phone, default, default);
 END //
 
-CREATE PROCEDURE retrieveUser(IN uname VARCHAR(50), IN pass mediumint unsigned)
+CREATE PROCEDURE retrieveUser(IN uname VARCHAR(50), IN pass VARCHAR(255))
 BEGIN
     SELECT * FROM user WHERE username = uname AND password = pass;
 END //
 
 CREATE PROCEDURE updateUser(
-    IN uname VARCHAR(50), IN newUName VARCHAR(50), IN name varchar(50), IN pass MEDIUMINT UNSIGNED, IN email VARCHAR(50), IN phone VARCHAR(15))
+    IN uname VARCHAR(50), IN newUName VARCHAR(50), IN name varchar(50), IN pass VARCHAR(255), IN email VARCHAR(50), IN phone VARCHAR(15))
 BEGIN
     SET @uid = (SELECT `id` FROM `user` WHERE username = uname);
     REPLACE INTO user VALUES (@uid, newUName, name, pass, email, phone, default, default);
 END //
 
-CREATE PROCEDURE deleteUser(IN uname VARCHAR(50), IN pass mediumint unsigned)
+CREATE PROCEDURE deleteUser(IN uname VARCHAR(50), IN pass VARCHAR(255))
 BEGIN
     SET @uid = (SELECT id FROM user WHERE username = uname AND password = pass);
     DELETE FROM user WHERE username = uname AND password = pass;
