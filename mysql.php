@@ -6,7 +6,7 @@ const MYSQL_CONN_ERROR = "Unable to connect to database.";
     echo "You have successfully signed up. ". $message;
 }*/
 //Obtain post values.
-/*
+/* For use only if you decide to skip using jquery/ajax.
 $_PHP_SELF = $_SERVER["PHP_SELF"];
 $username = $_POST["uid"];
 $name = $_POST["name"];
@@ -32,14 +32,16 @@ $dbdatabase = 'phptest';
 $mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbdatabase, 3306);
 $sql = "CALL createNewUser('$username', '$name', '$password', '$email', '$phone')";
 
+$mysqli->query($sql);
+
+$sql = "CALL retrieveUser('$username', '$password')";
 $result = $mysqli->query($sql);
-
-echo 'You have successfully created your account.';
-
-/* This is only if you are selecting something, doesn't work for inserts or updates/deletes.
 if($row = $result->fetch_assoc()) {
-    echo $row['id'] . ' ' . $row['name'] . ' ' . $row['username'] . ' ' . $row['password'] . ' ' . $row['email'] . ' ' . $row['phone'];
-}*/
+    echo $row['id'] . ' ' . $row['name'] . ' ' . $row['username'] . ' ' . $row['email'] . ' ' . $row['phone'];
+}
+
+echo '<br>';
+echo 'You have successfully created your account.';
 
 // exit();
 
