@@ -32,16 +32,27 @@ $dbdatabase = 'phptest';
 $mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbdatabase, 3306);
 $sql = "CALL createNewUser('$username', '$name', '$password', '$email', '$phone')";
 
-$mysqli->query($sql);
+try {
+    $mysqli->query($sql);
 
-$sql = "CALL retrieveUser('$username', '$password')";
-$result = $mysqli->query($sql);
-if($row = $result->fetch_assoc()) {
-    echo $row['id'] . ' ' . $row['name'] . ' ' . $row['username'] . ' ' . $row['email'] . ' ' . $row['phone'];
+    $sql = "CALL retrieveUser('$username', '$password')";
+    $result = $mysqli->query($sql);
+    if ($row = $result->fetch_assoc()) {
+        echo 'You have successfully created your account.';
+        echo '<br>';
+        echo $row['id'] . ' ' . $row['name'] . ' ' . $row['username'] . ' ' . $row['email'] . ' ' . $row['phone'];
+    }
+} catch (mysqli_sql_exception $e) {
+    if (preg_match('/.*key \'email\'/', $e->getMessage())) {
+        echo 'That email is already in use with an existing account.';
+    } elseif (preg_match('/.*key \'username\'/', $e->getMessage())) {
+        echo 'That username is already in use with an existing account.';
+    }
+/*  echo $e->getMessage() . "<br>";
+    echo $e->getCode() . "<br>";
+    echo $e->getTraceAsString() . "<br>";*/
+    //throw $e;
 }
-
-echo '<br>';
-echo 'You have successfully created your account.';
 
 // exit();
 
