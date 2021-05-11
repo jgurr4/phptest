@@ -1,13 +1,25 @@
 <?php declare(strict_types=1);
 const MYSQL_CONN_ERROR = "Unable to connect to database.";
 
+/*if( $_REQUEST["message"] ){
+    $message = $_REQUEST['message'];
+    echo "You have successfully signed up. ". $message;
+}*/
 //Obtain post values.
+/*
 $_PHP_SELF = $_SERVER["PHP_SELF"];
 $username = $_POST["uid"];
 $name = $_POST["name"];
 $password = hash('sha256', $_POST["password"]);
 $email = $_POST["email"];
 $phone = $_POST["phone"];
+*/
+
+$username = $_REQUEST["uid"];
+$name = $_REQUEST["name"];
+$password = hash('sha256', $_REQUEST["password"]);
+$email = $_REQUEST["email"];
+$phone = $_REQUEST["phone"];
 
 // Ensure reporting is setup correctly
 mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
@@ -22,12 +34,19 @@ $sql = "CALL createNewUser('$username', '$name', '$password', '$email', '$phone'
 
 $result = $mysqli->query($sql);
 
+echo 'You have successfully created your account.';
+
+/* This is only if you are selecting something, doesn't work for inserts or updates/deletes.
+if($row = $result->fetch_assoc()) {
+    echo $row['id'] . ' ' . $row['name'] . ' ' . $row['username'] . ' ' . $row['password'] . ' ' . $row['email'] . ' ' . $row['phone'];
+}*/
+
+// exit();
+
 // refreshes the page.
 /*$location = '/index.html';
 header("Location:$location");*/
 //Load the new html in the page:
-echo 'You have successfully created your account.' ;
-exit();
 
 
 /*$row = $result->fetch_assoc() or die(mysql_error());
