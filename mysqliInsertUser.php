@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
-include 'index.php';
-$getVar = new Test();
-$mysqli = $getVar->sendMysqli();
+include 'MysqlConnect.php';
+$conn = new MysqlConnect();
+$mysqli = $conn->sendMysqli();
 
 $username = $_REQUEST["uid"];
 $name = $_REQUEST["name"];
