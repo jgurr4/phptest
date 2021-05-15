@@ -102,10 +102,19 @@ END //
 
 CREATE PROCEDURE deleteUser(IN uname VARCHAR(50), IN pass VARCHAR(255))
 BEGIN
-    SET @uid = (SELECT id FROM user WHERE username = uname AND password = pass);
-    DELETE FROM user WHERE username = uname AND password = pass;
-    DELETE FROM taskCompletion WHERE user_id = @uid;
+    SET @uid = (SELECT id FROM user WHERE username = uname AND password = pass FOR UPDATE);
+    IF @uid = (SELECT id FROM user WHERE username = uname AND password = pass) THEN
+        DELETE FROM user WHERE username = uname AND password = pass;
+        DELETE FROM taskCompletion WHERE user_id = @uid;
+    ELSE SELECT 'no user found with that username/password' AS message;
+    END IF;
 END //
+
+CREATE PROCEDURE getTasks(IN myOffset int, IN amount int)
+BEGIN
+   SELECT * FROM task LIMIT myOffset, amount;
+END //
+DELIMITER ;
 
 CREATE ROLE IF NOT EXISTS 'app', 'developer','administrator';
 GRANT ALL ON *.* TO 'administrator';

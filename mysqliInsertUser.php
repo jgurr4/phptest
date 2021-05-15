@@ -1,19 +1,7 @@
 <?php declare(strict_types=1);
-const MYSQL_CONN_ERROR = "Unable to connect to database.";
-
-/*if( $_REQUEST["message"] ){
-    $message = $_REQUEST['message'];
-    echo "You have successfully signed up. ". $message;
-}*/
-//Obtain post values.
-/* For use only if you decide to skip using jquery/ajax.
-$_PHP_SELF = $_SERVER["PHP_SELF"];
-$username = $_POST["uid"];
-$name = $_POST["name"];
-$password = hash('sha256', $_POST["password"]);
-$email = $_POST["email"];
-$phone = $_POST["phone"];
-*/
+include 'index.php';
+$getVar = new Test();
+$mysqli = $getVar->sendMysqli();
 
 $username = $_REQUEST["uid"];
 $name = $_REQUEST["name"];
@@ -21,20 +9,10 @@ $password = hash('sha256', $_REQUEST["password"]);
 $email = $_REQUEST["email"];
 $phone = $_REQUEST["phone"];
 
-// Ensure reporting is setup correctly
-mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ERROR);
-
-//Set up mysql connection with connection pooling:
-$dbhost = 'p:192.168.1.53';
-$dbuser = 'root';
-$dbpass = 'super03';
-$dbdatabase = 'phptest';
-$mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbdatabase, 3306);
 $sql = "CALL createNewUser('$username', '$name', '$password', '$email', '$phone')";
 
 try {
     $mysqli->query($sql);
-
     $sql = "CALL retrieveUser('$username', '$password')";
     $result = $mysqli->query($sql);
     if ($row = $result->fetch_assoc()) {
@@ -48,16 +26,19 @@ try {
     } elseif (preg_match('/.*key \'username\'/', $e->getMessage())) {
         echo 'That username is already in use with an existing account.';
     }
+}
+/* Todo: Add functionality for deleteUser, updateUser, getNextTask, addComplete, and removeComplete stored procedures.
+
+
 /*  echo $e->getMessage() . "<br>";
     echo $e->getCode() . "<br>";
     echo $e->getTraceAsString() . "<br>";*/
-    //throw $e;
-}
+//throw $e;
 
 // exit();
 
 // refreshes the page.
-/*$location = '/index.html';
+/*$location = '/index.php';
 header("Location:$location");*/
 //Load the new html in the page:
 
@@ -98,3 +79,16 @@ echo $row;*/
 }*/
 
 
+/*if( $_REQUEST["message"] ){
+    $message = $_REQUEST['message'];
+    echo "You have successfully signed up. ". $message;
+}*/
+//Obtain post values.
+/* For use only if you decide to skip using jquery/ajax.
+$_PHP_SELF = $_SERVER["PHP_SELF"];
+$username = $_POST["uid"];
+$name = $_POST["name"];
+$password = hash('sha256', $_POST["password"]);
+$email = $_POST["email"];
+$phone = $_POST["phone"];
+*/
