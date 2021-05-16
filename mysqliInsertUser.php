@@ -19,6 +19,8 @@ try {
         echo 'You have successfully created your account.';
         echo '<br>';
         echo $row['id'] . ' ' . $row['name'] . ' ' . $row['username'] . ' ' . $row['email'] . ' ' . $row['phone'];
+    } else {
+        echo 'failed to create user.';
     }
 } catch (mysqli_sql_exception $e) {
     if (preg_match('/.*key \'email\'/', $e->getMessage())) {
@@ -27,7 +29,6 @@ try {
         echo 'That username is already in use with an existing account.';
     }
 }
-/* Todo: Add functionality for deleteUser, updateUser, getNextTask, addComplete, and removeComplete stored procedures.
 
 
 /*  echo $e->getMessage() . "<br>";

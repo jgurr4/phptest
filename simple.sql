@@ -93,6 +93,11 @@ BEGIN
     SELECT * FROM user WHERE username = uname AND password = pass;
 END //
 
+CREATE PROCEDURE retrieveUserFromEmail(IN uname VARCHAR(50), IN user_email VARCHAR(50))
+BEGIN
+    SELECT * FROM user WHERE username = uname AND email = user_email;
+END //
+
 CREATE PROCEDURE updateUser(
     IN uname VARCHAR(50), IN newUName VARCHAR(50), IN name varchar(50), IN pass VARCHAR(255), IN email VARCHAR(50), IN phone VARCHAR(15))
 BEGIN
