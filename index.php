@@ -47,14 +47,18 @@
 <script type="text/javascript" language="JavaScript">
     // This function checks to see if user exists in table, then if successful will take user to the main page.
     $(document).ready(function () {
-        $("#loginDriver").click(function (event) {
+        $("#loginDriver").click(async function (event) {
             let uname = $("#username").val();
             let pass = $("#passwordCheck").val();
             $("#stage").load('/mysqlLogin.php', {
                 "uname": uname,
                 "pass": pass,
-            });
-            $(".input").val(''); // clears the text inside each input text box.
+            }); //FIXME: Currently, this runs asynchronously and never gets called. I need to figure out how to use async/await here.
+            if ($("#loginResult").html() === 'success') {
+                $(window).attr('location','/main.php');
+            } else {
+                $(".input").val(''); // clears the text inside each input text box.
+            }
         });
     });
 

@@ -1,3 +1,14 @@
+TODO:
+
+#0: Add hit enter key functionality to submit all html forms. 
+#0: Add resetPassword page and functionality using updateUser() stored procedure.
+#0: Add cookies which remember if user logged in within last 24 hours.
+#0: Add remember password option (again using cookies). (Maybe not, I'll decide if this is a good idea or not.)
+#0: Learn of a method that allows me to use form tags with ajax.
+
+
+==================================================
+
 Add this to git file:
 How to remove untracked files so the repo is clean just like it was before any changes occured:
 
