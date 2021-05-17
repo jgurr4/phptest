@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <title>Main</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="/orgchart.js"></script>
     <style>
         th {
             align: center;
             border: 3px black solid;
         }
+
         td {
             align: center;
             border: 1px black solid;
@@ -18,6 +20,30 @@
 
 </head>
 <body>
+<button id="city">City</button>
+<button id="homestead">Homestead</button>
+<button id="survival">Survival</button>
+
+<div style="width:900px; height:900px; margin: 40px auto;border:3px black solid;" id="orgchart"></div>
+<script>
+    let chart = new OrgChart(document.getElementById("orgchart"), {
+/*
+        nodeMenu: {
+            png : { text: "Export PNG"}
+        },
+*/
+        nodeBinding: {
+            field_0: "tech",
+            img_0: "img"
+        },
+        nodes: [
+            {id: 1, tech: "Stone Axehead", img: "/images/stoneAxehead.png"},
+            {id: 2, pid: 1, tech: "Plant Cordage", img: "/images/plantCordage.png"},
+            {id: 3, pid: 1, tech: "Stone Axe", img: "/images/stoneAxe.png"}
+        ]
+    });
+</script>
+
 <table>
     <tr>
         <th>ID</th>
@@ -52,6 +78,25 @@
 <?php else: ?>
     <h3>No Results Found.</h3>
 <?php endif; ?>
+<script>
+    $(document).ready(function () {
+        $("#city").click(function (event) {
+            //put code in here to change all the page info to the city type.
+        })
+    })
+
+    $(document).ready(function () {
+        $("#homestead").click(function (event) {
+            //put code in here to change all the page info to the homestead type.
+        })
+    })
+
+    $(document).ready(function () {
+        $("#survival").click(function (event) {
+            //put code in here to change all the page info to the survival type.
+        })
+    })
+</script>
 
 </body>
 </html>
