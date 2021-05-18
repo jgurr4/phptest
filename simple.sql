@@ -4,6 +4,7 @@ USE phptest;
 
 CREATE TABLE `task` (
                         `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+                        `pid` int(10) unsigned NOT NULL,
                         `title` varchar(255) UNIQUE NOT NULL,
                         `order` int(10) unsigned,
                         `cityOrder` int(10) unsigned,

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Main</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="/orgchart.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <style>
         th {
             align: center;
@@ -16,6 +16,10 @@
             border: 1px black solid;
             margin: 0px;
         }
+
+        #menu {
+            float: right;
+        }
     </style>
 
 </head>
@@ -23,25 +27,48 @@
 <button id="city">City</button>
 <button id="homestead">Homestead</button>
 <button id="survival">Survival</button>
+<div id="menu">
+    <button id="logout">logout</button>
+    <button id="profile">profile page</button>
+</div>
+
+<?php
+include 'MysqlConnect.php';
+$conn = new MysqlConnect();
+$mysqli = $conn->sendMysqli();
+$techResult = $mysqli->query('CALL getTasks(0,100)') or die(mysql_error);
+?>
 
 <div style="width:900px; height:900px; margin: 40px auto;border:3px black solid;" id="orgchart"></div>
 <script>
     let chart = new OrgChart(document.getElementById("orgchart"), {
-/*
-        nodeMenu: {
-            png : { text: "Export PNG"}
-        },
-*/
         nodeBinding: {
             field_0: "tech",
             img_0: "img"
         },
         nodes: [
-            {id: 1, tech: "Stone Axehead", img: "/images/stoneAxehead.png"},
-            {id: 2, pid: 1, tech: "Plant Cordage", img: "/images/plantCordage.png"},
-            {id: 3, pid: 1, tech: "Stone Axe", img: "/images/stoneAxe.png"}
+            <?php if ($techResult->num_rows > 0) {
+            $i = 0;
+            while ($row = $techResult->fetch_assoc()) {
+                if ($techResult->num_rows != $i + 1) {
+                    echo "{id: " . $row['id'] . ", tech: '" . $row['title'] . "', img: '" . "/images/stoneAxehead.png" . "', instructions: '" . $row['instructions'] . "'},\n";
+                    $i++;
+                } else {
+                    echo "{id: " . $row['id'] . ", tech: '" . $row['title'] . "', img: '" . "/images/stoneAxehead.png" . "', instructions: '" . $row['instructions'] . "'}\n";
+                }
+            }
+        }
+            $techResult->close();
+            $mysqli->next_result();
+            ?>
         ]
     });
+    /*
+            }
+                {id: 1, tech: "Stone Axehead", img: "/images/stoneAxehead.png", instructions: "placeholder"},
+                {id: 2, pid: 1, tech: "Plant Cordage", img: "/images/plantCordage.png", instructions: "placeholder"},
+                {id: 3, pid: 1, tech: "Stone Axe", img: "/images/stoneAxe.png", instructions: "placeholder"}
+    */
 </script>
 
 <table>
@@ -56,9 +83,6 @@
         <th>Instructions</th>
     </tr>
     <?php
-    include 'MysqlConnect.php';
-    $conn = new MysqlConnect();
-    $mysqli = $conn->sendMysqli();
     $result = $mysqli->query('CALL getTasks(0, 10)') or die(mysql_error);
     if ($result->num_rows > 0):
     ?>
@@ -97,6 +121,41 @@
         })
     })
 </script>
-
 </body>
 </html>
+
+<!--
+This is an option if I want to try using canvas instead later.
+     //provides _.cloneDeep()
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+
+//This goes inside <style> tags:
+        canvas {
+            width:900px;
+            height:900px;
+            display: block;
+            margin: 40px auto;
+            border:3px black solid;
+            background: #134;
+        }
+<canvas id="techTree" width="200" height="100" style="">
+    Your browser does not support the HTML5 canvas tag.
+</canvas>
+<script>
+    "use strict";
+    let canvas = document.getElementById('techTree');
+    let ctx = canvas.getContext('2d');
+
+    class Controller {
+        constructor() {
+            this.buildTree();
+        }
+
+        buildTree() {
+
+        }
+
+    }
+    const controller = new Controller();
+</script>
+-->
