@@ -1,7 +1,8 @@
 TODO:
 
-#0: Make 3 separate tables, and fill them with at least 20 items each.
-#0: Add nextTask section under tech tree.
+#0: Update orgchart to be customized for my new techTree system that I designed. Write down full system on whiteboard
+so I can visualize it first.
+#0: Add nextTask section under tech tree using the revamped getNextTask procedures.
 #0: Add functionality to the 3 buttons at the top of page to change the content of the page.
 #0: Add functionality to the logout and profile button on top right of page.
 #0: Customize and fix any bugs with tech tree template. Such as the issue caused by the instructions overflowing past the width of page inside menu. Also remove zooming in and out unless user uses CTRL+ scrollwheel. and perhaps give that instruction on top of tech tree.

@@ -36,18 +36,19 @@
 include 'MysqlConnect.php';
 $conn = new MysqlConnect();
 $mysqli = $conn->sendMysqli();
-$techResult = $mysqli->query('CALL getSurvivalTasks(0,100)') or die(mysql_error);
 ?>
 
-<div style="width:900px; height:900px; margin: 40px auto;border:3px black solid;" id="orgchart"></div>
+<div id="survivalOrgchart" style="width:900px; height:900px; margin: 40px auto;border:3px black solid;"></div>
 <script>
-    let chart = new OrgChart(document.getElementById("orgchart"), {
+    let chart = new OrgChart(document.getElementById("survivalOrgchart"), {
         nodeBinding: {
             field_0: "tech",
             img_0: "img"
         },
         nodes: [
-            <?php if ($techResult->num_rows > 0) {
+            <?php
+            $techResult = $mysqli->query('CALL getSurvivalTasks(0,100)') or die(mysql_error);
+            if ($techResult->num_rows > 0) {
             $i = 0;
             $pid = -1;
             while ($row = $techResult->fetch_assoc()) {
@@ -71,7 +72,21 @@ $techResult = $mysqli->query('CALL getSurvivalTasks(0,100)') or die(mysql_error)
     });
 </script>
 
-<table>
+<div id="nextTask">
+    <h3>Next Task for you to complete:</h3>
+<!--    FIXME: Somehow I need to get username from cookie to input for the stored procedure call here.-->
+    <?php $taskRes = $mysqli->query('CALL getNextSurvivalTask("TheGuy")');
+        $row = $taskRes->fetch_assoc(); ?>
+    <p><?php echo $row['title']; ?></p>
+    <img src="/images/<?php echo $row['image']; ?>" width="200px" height="200px">
+    <?php
+        $taskRes->close();
+        $mysqli->next_result();
+    ?>
+</div>
+
+<h3>Tasks for Survival Table</h3>
+<table id="survivalTable">
     <tr>
         <th>ID</th>
         <th>Title</th>
@@ -99,8 +114,22 @@ $techResult = $mysqli->query('CALL getSurvivalTasks(0,100)') or die(mysql_error)
 </table>
 <?php else: ?>
     <h3>No Results Found.</h3>
-<?php endif; ?>
+<?php
+endif;
+    $result->close();
+    $mysqli->next_result();
+?>
+
+
 <script>
+    $(document).ready(function () {
+        $("#survival").click(function (event) {
+            $("#survivalOrgchart").toggle();
+            $("#survivalTable").toggle();
+            //put code in here to change all the page info to the survival type.
+        })
+    })
+
     $(document).ready(function () {
         $("#city").click(function (event) {
             //put code in here to change all the page info to the city type.
@@ -113,11 +142,6 @@ $techResult = $mysqli->query('CALL getSurvivalTasks(0,100)') or die(mysql_error)
         })
     })
 
-    $(document).ready(function () {
-        $("#survival").click(function (event) {
-            //put code in here to change all the page info to the survival type.
-        })
-    })
 </script>
 </body>
 </html>
