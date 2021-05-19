@@ -36,7 +36,7 @@
 include 'MysqlConnect.php';
 $conn = new MysqlConnect();
 $mysqli = $conn->sendMysqli();
-$techResult = $mysqli->query('CALL getTasks(0,100)') or die(mysql_error);
+$techResult = $mysqli->query('CALL getSurvivalTasks(0,100)') or die(mysql_error);
 ?>
 
 <div style="width:900px; height:900px; margin: 40px auto;border:3px black solid;" id="orgchart"></div>
@@ -51,10 +51,10 @@ $techResult = $mysqli->query('CALL getTasks(0,100)') or die(mysql_error);
             $i = 0;
             while ($row = $techResult->fetch_assoc()) {
                 if ($techResult->num_rows != $i + 1) {
-                    echo "{id: " . $row['id'] . ", tech: '" . $row['title'] . "', img: '" . "/images/stoneAxehead.png" . "', instructions: '" . $row['instructions'] . "'},\n";
+                    echo "{id: " . $row['id'] . ", pid: " . $row['pid'] . ", tech: '" . $row['title'] . "', img: '" . $row['image'] . "', instructions: '" . $row['instructions'] . "'},\n";
                     $i++;
                 } else {
-                    echo "{id: " . $row['id'] . ", tech: '" . $row['title'] . "', img: '" . "/images/stoneAxehead.png" . "', instructions: '" . $row['instructions'] . "'}\n";
+                    echo "{id: " . $row['id'] . ", pid: " . $row['pid'] . ", tech: '" . $row['title'] . "', img: '" . $row['image'] . "', instructions: '" . $row['instructions'] . "'}\n";
                 }
             }
         }
@@ -63,12 +63,6 @@ $techResult = $mysqli->query('CALL getTasks(0,100)') or die(mysql_error);
             ?>
         ]
     });
-    /*
-            }
-                {id: 1, tech: "Stone Axehead", img: "/images/stoneAxehead.png", instructions: "placeholder"},
-                {id: 2, pid: 1, tech: "Plant Cordage", img: "/images/plantCordage.png", instructions: "placeholder"},
-                {id: 3, pid: 1, tech: "Stone Axe", img: "/images/stoneAxe.png", instructions: "placeholder"}
-    */
 </script>
 
 <table>
@@ -83,7 +77,7 @@ $techResult = $mysqli->query('CALL getTasks(0,100)') or die(mysql_error);
         <th>Instructions</th>
     </tr>
     <?php
-    $result = $mysqli->query('CALL getTasks(0, 10)') or die(mysql_error);
+    $result = $mysqli->query('CALL getSurvivalTasks(0, 10)') or die(mysql_error);
     if ($result->num_rows > 0):
     ?>
     <?php while ($row = $result->fetch_assoc()): ?>

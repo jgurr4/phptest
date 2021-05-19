@@ -2,7 +2,7 @@ DROP DATABASE IF EXISTS phptest;
 CREATE DATABASE phptest;
 USE phptest;
 
-CREATE TABLE `task` (
+CREATE TABLE `survival_task` (
                         `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
                         `pid` int(10) unsigned NOT NULL,
                         `title` varchar(255) UNIQUE NOT NULL,
@@ -12,7 +12,36 @@ CREATE TABLE `task` (
                         `user_author` varchar(40) NOT NULL,
                         `purpose` text NOT NULL,
                         `instructions` text NOT NULL,
+                        `image` VARCHAR(255) DEFAULT '',
                         PRIMARY KEY (`id`)
+) ENGINE InnoDB;
+
+CREATE TABLE `homestead_task` (
+                                 `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+                                 `pid` int(10) unsigned NOT NULL,
+                                 `title` varchar(255) UNIQUE NOT NULL,
+                                 `order` int(10) unsigned,
+                                 `cityOrder` int(10) unsigned,
+                                 `rank` enum('A','B','C','D','E','F','G','H') NOT NULL DEFAULT 'A',
+                                 `user_author` varchar(40) NOT NULL,
+                                 `purpose` text NOT NULL,
+                                 `instructions` text NOT NULL,
+                                 `image` VARCHAR(255) DEFAULT '',
+                                 PRIMARY KEY (`id`)
+) ENGINE InnoDB;
+
+CREATE TABLE `city_task` (
+                                  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+                                  `pid` int(10) unsigned NOT NULL,
+                                  `title` varchar(255) UNIQUE NOT NULL,
+                                  `order` int(10) unsigned,
+                                  `cityOrder` int(10) unsigned,
+                                  `rank` enum('A','B','C','D','E','F','G','H') NOT NULL DEFAULT 'A',
+                                  `user_author` varchar(40) NOT NULL,
+                                  `purpose` text NOT NULL,
+                                  `instructions` text NOT NULL,
+                                  `image` VARCHAR(255) DEFAULT '',
+                                  PRIMARY KEY (`id`)
 ) ENGINE InnoDB;
 
 CREATE TABLE `user` (
@@ -66,9 +95,17 @@ WHERE t1.dateCompleted = (SELECT MAX(t2.dateCompleted)
                           WHERE t2.user_id = t1.user_id);
 
 DELIMITER //
-CREATE PROCEDURE getNextTask(IN u1 VARCHAR(50))
+CREATE PROCEDURE getNextSurvivalTask(IN u1 VARCHAR(50))
 BEGIN
-    SELECT * FROM task WHERE id = (SELECT task_id from userLastCompletedTask WHERE username = u1) + 1;
+    SELECT * FROM survival_task WHERE id = (SELECT task_id from userLastCompletedTask WHERE username = u1) + 1;
+END //
+CREATE PROCEDURE getNextCityTask(IN u1 VARCHAR(50))
+BEGIN
+    SELECT * FROM city_task WHERE id = (SELECT task_id from userLastCompletedTask WHERE username = u1) + 1;
+END //
+CREATE PROCEDURE getNextHomesteadTask(IN u1 VARCHAR(50))
+BEGIN
+    SELECT * FROM homestead_task WHERE id = (SELECT task_id from userLastCompletedTask WHERE username = u1) + 1;
 END //
 
 CREATE PROCEDURE addComplete(IN uname VARCHAR(50), IN tid int unsigned)
@@ -116,9 +153,19 @@ BEGIN
     END IF;
 END //
 
-CREATE PROCEDURE getTasks(IN myOffset int, IN amount int)
+CREATE PROCEDURE getSurvivalTasks(IN myOffset int, IN amount int)
 BEGIN
-   SELECT * FROM task LIMIT myOffset, amount;
+   SELECT * FROM survival_task LIMIT myOffset, amount;
+END //
+
+CREATE PROCEDURE getCityTasks(IN myOffset int, IN amount int)
+BEGIN
+    SELECT * FROM city_task LIMIT myOffset, amount;
+END //
+
+CREATE PROCEDURE getHomesteadTasks(IN myOffset int, IN amount int)
+BEGIN
+    SELECT * FROM homestead_task LIMIT myOffset, amount;
 END //
 DELIMITER ;
 

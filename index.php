@@ -47,7 +47,7 @@
 <script type="text/javascript" language="JavaScript">
     // This function checks to see if user exists in table, then if successful will take user to the main page.
     $(document).ready(function () {
-        $("#loginDriver").click(async function (event) {
+        $("#loginDriver").click(function (event) {
             let uname = $("#username").val();
             let pass = $("#passwordCheck").val();
             $("#stage").load('/mysqlLogin.php', {

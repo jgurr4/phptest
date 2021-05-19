@@ -7,9 +7,11 @@ To start MySQL container:
 ./start_mysql
 ```
 
-Setup MySQL Databases, Tables and Users (run only once):
+Setup MySQL Databases, Tables and Users:
 ```
-./setup_mysql
+inside mysql container run this command:
+source /sqlScripts/simple.sql
+source /sqlScripts/sampleData.sql
 ```
 
 To change php default credentials for mysqli:
