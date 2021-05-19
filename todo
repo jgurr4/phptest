@@ -2,7 +2,9 @@ TODO:
 
 #0: Update orgchart to be customized for my new techTree system that I designed. Write down full system on whiteboard
 so I can visualize it first.
-#0: Add nextTask section under tech tree using the revamped getNextTask procedures.
+#0: Add functionality to next task section where it shows you the instructions and sources somehow. Either through hovering mouse, or simply it being below.
+#0: Style next task section to be how I want, perhaps like a small border box with the image inside and the instructions/sources and checkmark underneath.
+#0: Add functionality to checkmark button so that it pops up with the "how many hours did it take you?" question with the time input box.
 #0: Add functionality to the 3 buttons at the top of page to change the content of the page.
 #0: Add functionality to the logout and profile button on top right of page.
 #0: Customize and fix any bugs with tech tree template. Such as the issue caused by the instructions overflowing past the width of page inside menu. Also remove zooming in and out unless user uses CTRL+ scrollwheel. and perhaps give that instruction on top of tech tree.

@@ -49,22 +49,22 @@ $mysqli = $conn->sendMysqli();
             <?php
             $techResult = $mysqli->query('CALL getSurvivalTasks(0,100)') or die(mysql_error);
             if ($techResult->num_rows > 0) {
-            $i = 0;
-            $pid = -1;
-            while ($row = $techResult->fetch_assoc()) {
-                $lastTech = '';
-                if ($row['tech'] != $lastTech) {
-                    $pid++;
-                }
-                $lastTech = $row['tech'];
-                if ($techResult->num_rows != $i + 1) {
-                    echo "{id: " . $row['id'] . ", pid: " . $pid . ", tech: '" . $row['title'] . "', img: '/images/" . $row['image'] . "', instructions: '" . $row['instructions'] . "'},\n";
-                    $i++;
-                } else {
-                    echo "{id: " . $row['id'] . ", pid: " . $pid . ", tech: '" . $row['title'] . "', img: '/images/" . $row['image'] . "', instructions: '" . $row['instructions'] . "'}\n";
+                $i = 0;
+                $pid = -1;
+                while ($row = $techResult->fetch_assoc()) {
+                    $lastTech = '';
+                    if ($row['tech'] != $lastTech) {
+                        $pid++;
+                    }
+                    $lastTech = $row['tech'];
+                    if ($techResult->num_rows != $i + 1) {
+                        echo "{id: " . $row['id'] . ", pid: " . $pid . ", tech: '" . $row['title'] . "', img: '/images/" . $row['image'] . "', instructions: '" . $row['instructions'] . "'},\n";
+                        $i++;
+                    } else {
+                        echo "{id: " . $row['id'] . ", pid: " . $pid . ", tech: '" . $row['title'] . "', img: '/images/" . $row['image'] . "', instructions: '" . $row['instructions'] . "'}\n";
+                    }
                 }
             }
-        }
             $techResult->close();
             $mysqli->next_result();
             ?>
@@ -74,15 +74,21 @@ $mysqli = $conn->sendMysqli();
 
 <div id="nextTask">
     <h3>Next Task for you to complete:</h3>
-<!--    FIXME: Somehow I need to get username from cookie to input for the stored procedure call here.-->
+    <!--    FIXME: Somehow I need to get username from cookie to input for the stored procedure call here.-->
     <?php $taskRes = $mysqli->query('CALL getNextSurvivalTask("TheGuy")');
-        $row = $taskRes->fetch_assoc(); ?>
+    $row = $taskRes->fetch_assoc(); ?>
     <p><?php echo $row['title']; ?></p>
     <img src="/images/<?php echo $row['image']; ?>" width="200px" height="200px">
     <?php
-        $taskRes->close();
-        $mysqli->next_result();
+    $taskRes->close();
+    $mysqli->next_result();
     ?>
+    <br>
+    <p>I completed this task</p>
+    <button id="completed">checkmark emoji</button>
+    <br>
+    <p>How many hours did it take you?</p>
+    <input type="number" id="timeToComplete">
 </div>
 
 <h3>Tasks for Survival Table</h3>
@@ -116,8 +122,8 @@ $mysqli = $conn->sendMysqli();
     <h3>No Results Found.</h3>
 <?php
 endif;
-    $result->close();
-    $mysqli->next_result();
+$result->close();
+$mysqli->next_result();
 ?>
 
 
@@ -141,6 +147,19 @@ endif;
             //put code in here to change all the page info to the homestead type.
         })
     })
+
+    $(document).ready(function () {
+        $("#profile").click(function (event) {
+            $(window).attr('location', '/profile.php');
+        });
+    });
+
+    $(document).ready(function () {
+        $("#logout").click(function (event) {
+            $(window).attr('location', '/index.php');
+            //TODO: Add code here to remove cookies for user.
+        });
+    });
 
 </script>
 </body>
