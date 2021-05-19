@@ -49,12 +49,18 @@ $techResult = $mysqli->query('CALL getSurvivalTasks(0,100)') or die(mysql_error)
         nodes: [
             <?php if ($techResult->num_rows > 0) {
             $i = 0;
+            $pid = -1;
             while ($row = $techResult->fetch_assoc()) {
+                $lastTech = '';
+                if ($row['tech'] != $lastTech) {
+                    $pid++;
+                }
+                $lastTech = $row['tech'];
                 if ($techResult->num_rows != $i + 1) {
-                    echo "{id: " . $row['id'] . ", pid: " . $row['pid'] . ", tech: '" . $row['title'] . "', img: '" . $row['image'] . "', instructions: '" . $row['instructions'] . "'},\n";
+                    echo "{id: " . $row['id'] . ", pid: " . $pid . ", tech: '" . $row['title'] . "', img: '/images/" . $row['image'] . "', instructions: '" . $row['instructions'] . "'},\n";
                     $i++;
                 } else {
-                    echo "{id: " . $row['id'] . ", pid: " . $row['pid'] . ", tech: '" . $row['title'] . "', img: '" . $row['image'] . "', instructions: '" . $row['instructions'] . "'}\n";
+                    echo "{id: " . $row['id'] . ", pid: " . $pid . ", tech: '" . $row['title'] . "', img: '/images/" . $row['image'] . "', instructions: '" . $row['instructions'] . "'}\n";
                 }
             }
         }
@@ -69,24 +75,22 @@ $techResult = $mysqli->query('CALL getSurvivalTasks(0,100)') or die(mysql_error)
     <tr>
         <th>ID</th>
         <th>Title</th>
+        <th>Tech</th>
         <th>Order #</th>
-        <th>cityOrder</th>
-        <th>Rank</th>
         <th>Author</th>
         <th>Purpose</th>
         <th>Instructions</th>
     </tr>
     <?php
-    $result = $mysqli->query('CALL getSurvivalTasks(0, 10)') or die(mysql_error);
+    $result = $mysqli->query('CALL getSurvivalTasks(0, 100)') or die(mysql_error);
     if ($result->num_rows > 0):
     ?>
     <?php while ($row = $result->fetch_assoc()): ?>
         <tr>
             <td><?php echo $row['id'] ?></td>
             <td><?php echo $row['title'] ?></td>
-            <td><?php echo $row['order'] ?></td>
-            <td><?php echo $row['cityOrder'] ?></td>
-            <td><?php echo $row['rank'] ?></td>
+            <td><?php echo $row['tech'] ?></td>
+            <td><?php echo $row['survivalOrder'] ?></td>
             <td><?php echo $row['user_author'] ?></td>
             <td><?php echo $row['purpose'] ?></td>
             <td><?php echo $row['instructions'] ?></td>

@@ -27,6 +27,8 @@ try {
         echo 'That email is already in use with an existing account.';
     } elseif (preg_match('/.*key \'username\'/', $e->getMessage())) {
         echo 'That username is already in use with an existing account.';
+    } else {
+        echo $e->getMessage();
     }
 }
 

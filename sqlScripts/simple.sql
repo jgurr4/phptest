@@ -2,124 +2,81 @@ DROP DATABASE IF EXISTS phptest;
 CREATE DATABASE phptest;
 USE phptest;
 
-CREATE TABLE `survival_task` (
-                        `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-                        `pid` int(10) unsigned NOT NULL,
-                        `title` varchar(255) UNIQUE NOT NULL,
-                        `order` int(10) unsigned,
-                        `cityOrder` int(10) unsigned,
-                        `rank` enum('A','B','C','D','E','F','G','H') NOT NULL DEFAULT 'A',
-                        `user_author` varchar(40) NOT NULL,
-                        `purpose` text NOT NULL,
-                        `instructions` text NOT NULL,
-                        `image` VARCHAR(255) DEFAULT '',
-                        PRIMARY KEY (`id`)
-) ENGINE InnoDB;
-
-CREATE TABLE `homestead_task` (
-                                 `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-                                 `pid` int(10) unsigned NOT NULL,
-                                 `title` varchar(255) UNIQUE NOT NULL,
-                                 `order` int(10) unsigned,
-                                 `cityOrder` int(10) unsigned,
-                                 `rank` enum('A','B','C','D','E','F','G','H') NOT NULL DEFAULT 'A',
-                                 `user_author` varchar(40) NOT NULL,
-                                 `purpose` text NOT NULL,
-                                 `instructions` text NOT NULL,
-                                 `image` VARCHAR(255) DEFAULT '',
-                                 PRIMARY KEY (`id`)
-) ENGINE InnoDB;
-
-CREATE TABLE `city_task` (
-                                  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-                                  `pid` int(10) unsigned NOT NULL,
-                                  `title` varchar(255) UNIQUE NOT NULL,
-                                  `order` int(10) unsigned,
-                                  `cityOrder` int(10) unsigned,
-                                  `rank` enum('A','B','C','D','E','F','G','H') NOT NULL DEFAULT 'A',
-                                  `user_author` varchar(40) NOT NULL,
-                                  `purpose` text NOT NULL,
-                                  `instructions` text NOT NULL,
-                                  `image` VARCHAR(255) DEFAULT '',
-                                  PRIMARY KEY (`id`)
+CREATE TABLE `task` (
+   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+   `title` varchar(255) UNIQUE NOT NULL,
+   `tech` varchar(150) not null,
+   `survivalOrder` int(10) unsigned DEFAULT NULL,
+   `cityOrder` int(10) unsigned DEFAULT NULL,
+   `homesteadOrder` int(10) unsigned DEFAULT NULL,
+   `user_author` varchar(40) DEFAULT 'TheGuy',
+   `purpose` text DEFAULT NULL,
+   `instructions` text DEFAULT NULL,
+   `image` VARCHAR(255) DEFAULT '',
+   PRIMARY KEY (`id`)
 ) ENGINE InnoDB;
 
 CREATE TABLE `user` (
-                        `id` int unsigned NOT NULL AUTO_INCREMENT,
-                        `username` varchar(50) NOT NULL,
-                        `name` varchar(50) not null,
-                        `password` mediumint unsigned NOT NULL,
-                        `email` varchar(50) NOT NULL,
-                        `phone` varchar(15) DEFAULT NULL,
-                        `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                        `updated_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-                        PRIMARY KEY (`id`),
-                        UNIQUE KEY `email` (`email`),
-                        UNIQUE KEY `username` (`username`)
+   `id` int unsigned NOT NULL AUTO_INCREMENT,
+   `username` varchar(50) NOT NULL,
+   `name` varchar(50) not null,
+   `password` varchar(255) NOT NULL,
+   `email` varchar(50) NOT NULL,
+   `phone` varchar(15) DEFAULT NULL,
+   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   `updated_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+   PRIMARY KEY (`id`),
+   UNIQUE KEY `email` (`email`),
+   UNIQUE KEY `username` (`username`)
 ) ENGINE InnoDB;
 
 CREATE TABLE `supply` (
-                          `id` int unsigned NOT NULL AUTO_INCREMENT,
-                          `task_id` int unsigned,
-                          `name` varchar(50) NOT NULL,
-                          `base_material` varchar(50) NOT NULL,
-                          `secondary_material` varchar(50) DEFAULT NULL,
-                          `description` text,
-                          `common` enum('Y','N') DEFAULT 'N',
-                          `howToGet` text NOT NULL,
-                          PRIMARY KEY (`id`)
+   `id` int unsigned NOT NULL AUTO_INCREMENT,
+   `task_id` int unsigned,
+   `name` varchar(50) NOT NULL,
+   `base_material` varchar(50) NOT NULL,
+   `secondary_material` varchar(50) DEFAULT NULL,
+   `description` text,
+   `common` enum('Y','N') DEFAULT 'N',
+   `howToGet` text NOT NULL,
+   PRIMARY KEY (`id`)
 ) ENGINE InnoDB;
 
-CREATE TABLE taskCompletion(
-                               `user_id` int unsigned,
-                               `task_id` int unsigned,
-                               `dateCompleted` datetime not null default current_timestamp,
-                               PRIMARY KEY (`user_id`, `task_id`)
+CREATE TABLE survivalTasksCompleted(
+   `user_id` int unsigned,
+   `task_id` int unsigned,
+   `timeSpent` time not null,
+   `dateCompleted` datetime not null default current_timestamp,
+   PRIMARY KEY (`user_id`, `task_id`)
+) ENGINE InnoDB;
+
+CREATE TABLE homesteadTasksCompleted(
+   `user_id` int unsigned,
+   `task_id` int unsigned,
+   `timeSpent` time not null,
+   `dateCompleted` datetime not null default current_timestamp,
+   PRIMARY KEY (`user_id`, `task_id`)
+) ENGINE InnoDB;
+
+CREATE TABLE cityTasksCompleted(
+   `user_id` int unsigned,
+   `task_id` int unsigned,
+   `timeSpent` time not null,
+   `dateCompleted` datetime not null default current_timestamp,
+   PRIMARY KEY (`user_id`, `task_id`)
 ) ENGINE InnoDB;
 
 CREATE TABLE `source` (
-                          `method_id` int(10) unsigned DEFAULT NULL,
-                          `source1` text NOT NULL,
-                          `source2` text,
-                          `source3` text,
-                          `source4` text,
-                          `source5` text,
-                          `extraInfo` text
+   `method_id` int(10) unsigned DEFAULT NULL,
+   `source1` text NOT NULL,
+   `source2` text,
+   `source3` text,
+   `source4` text,
+   `source5` text,
+   `extraInfo` text
 ) ENGINE InnoDB;
 
-CREATE VIEW `userLastCompletedTask` AS
-SELECT username, t1.*
-FROM taskCompletion t1 INNER JOIN user ON (id = user_id)
-WHERE t1.dateCompleted = (SELECT MAX(t2.dateCompleted)
-                          FROM taskCompletion t2
-                          WHERE t2.user_id = t1.user_id);
-
 DELIMITER //
-CREATE PROCEDURE getNextSurvivalTask(IN u1 VARCHAR(50))
-BEGIN
-    SELECT * FROM survival_task WHERE id = (SELECT task_id from userLastCompletedTask WHERE username = u1) + 1;
-END //
-CREATE PROCEDURE getNextCityTask(IN u1 VARCHAR(50))
-BEGIN
-    SELECT * FROM city_task WHERE id = (SELECT task_id from userLastCompletedTask WHERE username = u1) + 1;
-END //
-CREATE PROCEDURE getNextHomesteadTask(IN u1 VARCHAR(50))
-BEGIN
-    SELECT * FROM homestead_task WHERE id = (SELECT task_id from userLastCompletedTask WHERE username = u1) + 1;
-END //
-
-CREATE PROCEDURE addComplete(IN uname VARCHAR(50), IN tid int unsigned)
-BEGIN
-    set @uid = (SELECT id FROM user WHERE username = uname);
-    INSERT INTO taskCompletion VALUES (@uid, tid, default);
-END //
-
-CREATE PROCEDURE removeComplete(IN uname VARCHAR(50), IN tid int unsigned)
-BEGIN
-    SET @uid = (SELECT id FROM user WHERE username = uname);
-    DELETE FROM taskCompletion WHERE user_id = @uid AND task_id = tid;
-END //
-
 CREATE PROCEDURE createNewUser(
     IN username VARCHAR(50), IN name varchar(50), IN pass VARCHAR(255), IN email VARCHAR(50), IN phone VARCHAR(15))
 BEGIN
@@ -153,19 +110,39 @@ BEGIN
     END IF;
 END //
 
-CREATE PROCEDURE getSurvivalTasks(IN myOffset int, IN amount int)
+CREATE PROCEDURE getNextSurvivalTask(IN u1 VARCHAR(50))
 BEGIN
-   SELECT * FROM survival_task LIMIT myOffset, amount;
+    SELECT * FROM task WHERE survivalOrder = (SELECT survivalOrder FROM task WHERE id = (SELECT task_id FROM survivalTasksCompleted WHERE user_id = (SELECT id FROM user WHERE username = u1) AND dateCompleted = (SELECT MAX(dateCompleted)))) + 1;
 END //
 
-CREATE PROCEDURE getCityTasks(IN myOffset int, IN amount int)
+CREATE PROCEDURE getNextHomesteadTask(IN u1 VARCHAR(50))
 BEGIN
-    SELECT * FROM city_task LIMIT myOffset, amount;
+    SELECT * FROM task WHERE homesteadOrder = (SELECT homesteadOrder FROM task WHERE id = (SELECT task_id FROM survivalTasksCompleted WHERE user_id = (SELECT id FROM user WHERE username = u1) AND dateCompleted = (SELECT MAX(dateCompleted)))) + 1;
+END //
+
+CREATE PROCEDURE getNextCityTask(IN u1 VARCHAR(50))
+BEGIN
+    SELECT * FROM task WHERE cityOrder = (SELECT cityOrder FROM task WHERE id = (SELECT task_id FROM survivalTasksCompleted WHERE user_id = (SELECT id FROM user WHERE username = u1) AND dateCompleted = (SELECT MAX(dateCompleted)))) + 1;
+END //
+
+CREATE PROCEDURE getTasks(IN myOffset int, IN amount int)
+BEGIN
+    SELECT * FROM task LIMIT myOffset, amount;
+end //
+
+CREATE PROCEDURE getSurvivalTasks(IN myOffset int, IN amount int)
+BEGIN
+   SELECT * FROM task WHERE survivalOrder is not null ORDER BY survivalOrder LIMIT myOffset, amount;
 END //
 
 CREATE PROCEDURE getHomesteadTasks(IN myOffset int, IN amount int)
 BEGIN
-    SELECT * FROM homestead_task LIMIT myOffset, amount;
+    SELECT * FROM task WHERE homesteadOrder is not null ORDER BY homesteadOrder LIMIT myOffset, amount;
+END //
+
+CREATE PROCEDURE getCityTasks(IN myOffset int, IN amount int)
+BEGIN
+    SELECT * FROM task WHERE cityOrder is not null ORDER BY cityOrder LIMIT myOffset, amount;
 END //
 DELIMITER ;
 
@@ -177,3 +154,25 @@ CREATE USER IF NOT EXISTS 'jared'@'localhost' IDENTIFIED BY 'super03';
 CREATE USER IF NOT EXISTS 'app'@'localhost' IDENTIFIED BY 'password';
 GRANT 'app' TO 'app'@'localhost';
 GRANT 'administrator' TO 'jared'@'localhost';
+FLUSH PRIVILEGES;
+
+/* These don't work in new database structure. Find a alternative methods if these are still needed.
+CREATE VIEW `userLastCompletedTask` AS
+SELECT username, t1.*
+FROM taskCompletion t1 INNER JOIN user ON (id = user_id)
+WHERE t1.dateCompleted = (SELECT MAX(t2.dateCompleted)
+                          FROM taskCompletion t2
+                          WHERE t2.user_id = t1.user_id);
+
+CREATE PROCEDURE removeComplete(IN uname VARCHAR(50), IN tid int unsigned)
+BEGIN
+    SET @uid = (SELECT id FROM user WHERE username = uname);
+    DELETE FROM taskCompletion WHERE user_id = @uid AND task_id = tid;
+END //
+
+CREATE PROCEDURE addComplete(IN uname VARCHAR(50), IN tid int unsigned)
+BEGIN
+    set @uid = (SELECT id FROM user WHERE username = uname);
+    INSERT INTO taskCompletion VALUES (@uid, tid, default);
+END //
+*/
