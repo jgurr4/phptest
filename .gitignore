@@ -54,3 +54,4 @@ build
 **/node_modules
 **/mysqldata
 **/mysql-data
+**/config.php
