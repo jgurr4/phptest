@@ -4,12 +4,7 @@
     <meta charset="UTF-8">
     <title>login</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <style>
-        .link {
-            color: blue;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div id="stage">

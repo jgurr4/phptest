@@ -1,0 +1,19 @@
+.link {
+    color: blue;
+    cursor: pointer;
+}
+
+th {
+    align: center;
+    border: 3px black solid;
+}
+
+td {
+    align: center;
+    border: 1px black solid;
+    margin: 0px;
+}
+
+#menu {
+    float: right;
+}

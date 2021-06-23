@@ -1,27 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <title>Main</title>
-    <script src="/orgchart.js"></script>
+    <!--    <script src="https://balkangraph.com/js/latest/OrgChart.js"></script>-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <style>
-        th {
-            align: center;
-            border: 3px black solid;
-        }
-
-        td {
-            align: center;
-            border: 1px black solid;
-            margin: 0px;
-        }
-
-        #menu {
-            float: right;
-        }
-    </style>
-
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <button id="city">City</button>
@@ -38,39 +22,29 @@ $conn = new MysqlConnect();
 $mysqli = $conn->sendMysqli();
 ?>
 
-<div id="survivalOrgchart" style="width:900px; height:900px; margin: 40px auto;border:3px black solid;"></div>
-<script>
-    let chart = new OrgChart(document.getElementById("survivalOrgchart"), {
-        nodeBinding: {
-            field_0: "tech",
-            img_0: "img"
-        },
-        nodes: [
-            <?php
-            $techResult = $mysqli->query('CALL getSurvivalTasks(0,100)') or die(mysql_error);
-            if ($techResult->num_rows > 0) {
-                $i = 0;
-                $pid = -1;
-                while ($row = $techResult->fetch_assoc()) {
-                    $lastTech = '';
-                    if ($row['tech'] != $lastTech) {
-                        $pid++;
-                    }
-                    $lastTech = $row['tech'];
-                    if ($techResult->num_rows != $i + 1) {
-                        echo "{id: " . $row['id'] . ", pid: " . $pid . ", tech: '" . $row['title'] . "', img: '/images/" . $row['image'] . "', instructions: '" . $row['instructions'] . "'},\n";
-                        $i++;
-                    } else {
-                        echo "{id: " . $row['id'] . ", pid: " . $pid . ", tech: '" . $row['title'] . "', img: '/images/" . $row['image'] . "', instructions: '" . $row['instructions'] . "'}\n";
-                    }
-                }
-            }
-            $techResult->close();
-            $mysqli->next_result();
-            ?>
-        ]
-    });
-</script>
+<!--16px default browser font size = 1 em-->
+<svg width="86vw" height="80vh" viewbox="0 0 1500 700"
+     style="margin: .4in auto; border:1vw black solid; display:block;">
+    <defs>   <!-- This means to hide the code inside it until the code inside is called with <use> -->
+        <g id="tree">
+            <g id="node">
+                <rect x="152" y="320" width="328" height="80" fill="#111111" rx="16" ry="16"></rect>
+                <text x="232" y="344" fill="#aaaaaa">Technology Name</text>
+                <rect x="232" y="352" width="248" height="48" fill="#333333" rx="16" ry="16"></rect>
+                <circle r="29" cx="192" cy="360" fill="#558473"></circle>    <!-- Tech img -->
+                <circle r="21" cx="259" cy="376" fill="#558473"></circle> <!-- mini circles/tasks img -->
+                <circle r="21" cx="307" cy="376" fill="#558473"></circle>
+                <circle r="21" cx="355" cy="376" fill="#558473"></circle>
+                <circle r="21" cx="403" cy="376" fill="#558473"></circle>
+                <circle r="21" cx="451" cy="376" fill="#558473"></circle>
+            </g>
+            <path></path>
+            <use href="#node" x="416" y="144"></use>
+            <use href="#node" x="416" y="-144"></use>
+        </g>
+    </defs>
+    <use href="#tree" id="mySvg" x="-100" y="0"></use>  <!--This tag controls entire tree. Javascript is used on this.-->
+</svg>
 
 <div id="nextTask">
     <h3>Next Task for you to complete:</h3>
@@ -103,7 +77,7 @@ $mysqli = $conn->sendMysqli();
         <th>Instructions</th>
     </tr>
     <?php
-    $result = $mysqli->query('CALL getSurvivalTasks(0, 100)') or die(mysql_error);
+    $result = $mysqli->query('CALL getTasks(0, 100)') or die(mysql_error);
     if ($result->num_rows > 0):
     ?>
     <?php while ($row = $result->fetch_assoc()): ?>
@@ -111,7 +85,7 @@ $mysqli = $conn->sendMysqli();
             <td><?php echo $row['id'] ?></td>
             <td><?php echo $row['title'] ?></td>
             <td><?php echo $row['tech'] ?></td>
-            <td><?php echo $row['survivalOrder'] ?></td>
+            <td><?php echo $row['order'] ?></td>
             <td><?php echo $row['user_author'] ?></td>
             <td><?php echo $row['purpose'] ?></td>
             <td><?php echo $row['instructions'] ?></td>
@@ -161,42 +135,41 @@ $mysqli->next_result();
         });
     });
 
+
+</script>
+<script>
+    //FIXME: bug with drag not stopping when mouseup.
+    let svg = document.getElementById('mySvg');
+    let svgX = svg.getAttributeNS(null, 'x');
+    let svgY = svg.getAttributeNS(null, 'y');
+    let startX = 0, startY = 0, newX = 0, newY = 0, x = 0, y = 0;
+    function getPos(e) {
+        e.preventDefault();
+        svgX = svg.getAttributeNS(null, 'x');
+        svgY = svg.getAttributeNS(null, 'y');
+        startX = e.clientX;
+        startY = e.clientY;
+        document.addEventListener('mouseup', stopDrag);
+        document.addEventListener('mousemove', moveMouse);
+    }
+
+    function moveMouse(e) {
+        e.preventDefault();
+        newX = e.clientX;
+        newY = e.clientY;
+        x = svgX - (startX - newX);
+        y = svgY - (startY - newY);
+        svg.setAttributeNS(null, 'x', x + "");
+        svg.setAttributeNS(null, 'y', y + "");
+    }
+
+    //Stop dragging element after mouseup event.
+    function stopDrag() {
+        document.removeEventListener('mousemove', moveMouse);
+    }
+
+    document.addEventListener('mousedown', getPos);
+
 </script>
 </body>
 </html>
-
-<!--
-This is an option if I want to try using canvas instead later.
-     //provides _.cloneDeep()
-<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
-
-//This goes inside <style> tags:
-        canvas {
-            width:900px;
-            height:900px;
-            display: block;
-            margin: 40px auto;
-            border:3px black solid;
-            background: #134;
-        }
-<canvas id="techTree" width="200" height="100" style="">
-    Your browser does not support the HTML5 canvas tag.
-</canvas>
-<script>
-    "use strict";
-    let canvas = document.getElementById('techTree');
-    let ctx = canvas.getContext('2d');
-
-    class Controller {
-        constructor() {
-            this.buildTree();
-        }
-
-        buildTree() {
-
-        }
-
-    }
-    const controller = new Controller();
-</script>
--->

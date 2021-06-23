@@ -6,9 +6,11 @@ CREATE TABLE `task` (
    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
    `title` varchar(255) UNIQUE NOT NULL,
    `tech` varchar(150) not null,
-   `survivalOrder` int(10) unsigned DEFAULT NULL,
-   `cityOrder` int(10) unsigned DEFAULT NULL,
-   `homesteadOrder` int(10) unsigned DEFAULT NULL,
+   `survival` BOOLEAN,
+   `city` BOOLEAN,
+   `homestead` BOOLEAN,
+   `order` int(10) unsigned DEFAULT NULL,
+   `group` varchar(30) DEFAULT NULL,
    `user_author` varchar(40) DEFAULT 'TheGuy',
    `purpose` text DEFAULT NULL,
    `instructions` text DEFAULT NULL,
@@ -112,17 +114,17 @@ END //
 
 CREATE PROCEDURE getNextSurvivalTask(IN u1 VARCHAR(50))
 BEGIN
-    SELECT * FROM task WHERE survivalOrder = (SELECT survivalOrder FROM task WHERE id = (SELECT task_id FROM survivalTasksCompleted WHERE user_id = (SELECT id FROM user WHERE username = u1) AND dateCompleted = (SELECT MAX(dateCompleted)))) + 1;
+    SELECT * FROM task WHERE survival = (SELECT survival FROM task WHERE id = (SELECT task_id FROM survivalTasksCompleted WHERE user_id = (SELECT id FROM user WHERE username = u1) AND dateCompleted = (SELECT MAX(dateCompleted)))) + 1;
 END //
 
 CREATE PROCEDURE getNextHomesteadTask(IN u1 VARCHAR(50))
 BEGIN
-    SELECT * FROM task WHERE homesteadOrder = (SELECT homesteadOrder FROM task WHERE id = (SELECT task_id FROM survivalTasksCompleted WHERE user_id = (SELECT id FROM user WHERE username = u1) AND dateCompleted = (SELECT MAX(dateCompleted)))) + 1;
+    SELECT * FROM task WHERE homestead = (SELECT homestead FROM task WHERE id = (SELECT task_id FROM survivalTasksCompleted WHERE user_id = (SELECT id FROM user WHERE username = u1) AND dateCompleted = (SELECT MAX(dateCompleted)))) + 1;
 END //
 
 CREATE PROCEDURE getNextCityTask(IN u1 VARCHAR(50))
 BEGIN
-    SELECT * FROM task WHERE cityOrder = (SELECT cityOrder FROM task WHERE id = (SELECT task_id FROM survivalTasksCompleted WHERE user_id = (SELECT id FROM user WHERE username = u1) AND dateCompleted = (SELECT MAX(dateCompleted)))) + 1;
+    SELECT * FROM task WHERE city = (SELECT city FROM task WHERE id = (SELECT task_id FROM survivalTasksCompleted WHERE user_id = (SELECT id FROM user WHERE username = u1) AND dateCompleted = (SELECT MAX(dateCompleted)))) + 1;
 END //
 
 CREATE PROCEDURE getTasks(IN myOffset int, IN amount int)
@@ -132,17 +134,17 @@ end //
 
 CREATE PROCEDURE getSurvivalTasks(IN myOffset int, IN amount int)
 BEGIN
-   SELECT * FROM task WHERE survivalOrder is not null ORDER BY survivalOrder LIMIT myOffset, amount;
+   SELECT * FROM task WHERE survival = TRUE ORDER BY survival LIMIT myOffset, amount;
 END //
 
 CREATE PROCEDURE getHomesteadTasks(IN myOffset int, IN amount int)
 BEGIN
-    SELECT * FROM task WHERE homesteadOrder is not null ORDER BY homesteadOrder LIMIT myOffset, amount;
+    SELECT * FROM task WHERE homestead = TRUE ORDER BY homestead LIMIT myOffset, amount;
 END //
 
 CREATE PROCEDURE getCityTasks(IN myOffset int, IN amount int)
 BEGIN
-    SELECT * FROM task WHERE cityOrder is not null ORDER BY cityOrder LIMIT myOffset, amount;
+    SELECT * FROM task WHERE city = TRUE LIMIT myOffset, amount;
 END //
 DELIMITER ;
 
@@ -156,7 +158,11 @@ GRANT 'app' TO 'app'@'localhost';
 GRANT 'administrator' TO 'jared'@'localhost';
 FLUSH PRIVILEGES;
 
-/* These don't work in new database structure. Find a alternative methods if these are still needed.
+LOAD DATA LOCAL INFILE './sqlScripts/insertTasks.csv' INTO TABLE task FIELDS TERMINATED BY ',' IGNORE 1 LINES;
+/* NOTE: You don't need to use quotes around strings or temporal data types in .csv files. Just make sure to escape extra commas with \,
+   If you do use quotes, those will appear in the database, which is not what you want. You also do not have to escape quotes inside strings
+   such as 'don\'t' since you're not using quotes to specify the start and end of each value.
+These don't work in new database structure. Find a alternative methods if these are still needed.
 CREATE VIEW `userLastCompletedTask` AS
 SELECT username, t1.*
 FROM taskCompletion t1 INNER JOIN user ON (id = user_id)
