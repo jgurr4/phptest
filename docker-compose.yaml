@@ -9,7 +9,7 @@ services:
       - "~/phptest/src/:/var/www/html/"
       - "~/phptest/php.ini:/usr/local/etc/php/conf.d/php.ini"
     ports:
-      - "8080:80"
+      - "8082:80"
   mysql-server:
     image: mysql:8.0.0
     restart: always

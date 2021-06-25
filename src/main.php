@@ -23,7 +23,7 @@ $mysqli = $conn->sendMysqli();
 ?>
 
 <!--16px default browser font size = 1 em-->
-<svg width="86vw" height="80vh" viewbox="0 0 1500 700"
+<svg id="fullSvg" width="86vw" height="80vh" viewbox="0 0 1500 700"
      style="margin: .4in auto; border:1vw black solid; display:block;">
     <defs>   <!-- This means to hide the code inside it until the code inside is called with <use> -->
         <g id="tree">
@@ -43,7 +43,7 @@ $mysqli = $conn->sendMysqli();
             <use href="#node" x="416" y="-144"></use>
         </g>
     </defs>
-    <use href="#tree" id="mySvg" x="-100" y="0"></use>  <!--This tag controls entire tree. Javascript is used on this.-->
+    <use id="mySvg" href="#tree" x="-100" y="0"></use>  <!--This tag controls entire tree. Javascript is used on this.-->
 </svg>
 
 <div id="nextTask">
@@ -138,8 +138,10 @@ $mysqli->next_result();
 
 </script>
 <script>
-    //FIXME: bug with drag not stopping when mouseup.
-    let svg = document.getElementById('mySvg');
+    //svg dragging api:
+    //FIXME: Right now this activates no matter where you click.
+    const svg = document.getElementById('mySvg');
+    const fullSvg = document.getElementById('fullSvg');
     let svgX = svg.getAttributeNS(null, 'x');
     let svgY = svg.getAttributeNS(null, 'y');
     let startX = 0, startY = 0, newX = 0, newY = 0, x = 0, y = 0;
@@ -168,7 +170,27 @@ $mysqli->next_result();
         document.removeEventListener('mousemove', moveMouse);
     }
 
-    document.addEventListener('mousedown', getPos);
+    fullSvg.onmousedown = getPos;
+
+    // Zoom svg functions:
+    //FIXME: Make it possible to affect scrollbar with mousewheel when mouse is not hovering over svg element.
+    // Change browser default behavior of scrollbar with mousewheel event.
+    window.addEventListener("wheel", e => e.preventDefault(), { passive:false })
+    function zoom(e) {
+        e.preventDefault();
+        scale += e.deltaY * -0.001;
+        //Change to -0.0009 or -0.002 to increase/decrease zoom increments per scroll.
+
+        scale = Math.min(Math.max(.35, scale), 2);
+        //Change .35 to .2 or .125 etc.. to make it possible to zoom out more. Or .4 > to make it zoom out less.
+        //Change 2 to 3 or 4 etc... to make it possible to zoom in more. Or 1 to make it zoom in less.
+
+        svg.style.transform = `scale(${scale})`;
+    }
+
+    let scale = 1;
+    fullSvg.onwheel = zoom;
+
 
 </script>
 </body>
