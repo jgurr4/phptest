@@ -40,6 +40,13 @@
 </div>
 
 <script type="text/javascript" language="JavaScript">
+    $(document).ready(function () {
+        let decodedCookie = decodeURIComponent(document.cookie);
+        if (decodedCookie.search("username") > -1) {
+            $(window).attr('location', '/main.php');
+        }
+    })
+
     // This function checks to see if user exists in table, then if successful will take user to the main page.
     $(document).ready(function () {
         $("#loginDriver").click(function (event) {
@@ -50,6 +57,10 @@
                 "pass": pass,
             }); //FIXME: Currently, this runs asynchronously and never gets called. I need to figure out how to use async/await here.
             if ($("#loginResult").html() === 'success') {
+                let curDate = new Date();
+                curDate.setDate(curDate.getDate() + 1);
+                let date = curDate.toUTCString();
+                document.cookie = "username=" + uname + "; expires=" + date + "; path=/";
                 $(window).attr('location','/main.php');
             } else {
                 $(".input").val(''); // clears the text inside each input text box.

@@ -128,10 +128,11 @@ $mysqli->next_result();
         });
     });
 
+    //logout function destroys all existing cookies.
     $(document).ready(function () {
         $("#logout").click(function (event) {
+            document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             $(window).attr('location', '/index.php');
-            //TODO: Add code here to remove cookies for user.
         });
     });
 
@@ -139,7 +140,6 @@ $mysqli->next_result();
 </script>
 <script>
     //svg dragging api:
-    //FIXME: Right now this activates no matter where you click.
     const svg = document.getElementById('mySvg');
     const fullSvg = document.getElementById('fullSvg');
     let svgX = svg.getAttributeNS(null, 'x');
