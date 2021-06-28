@@ -6,8 +6,8 @@ services:
       context: .
     restart: always
     volumes:
-      - "~/phptest/src/:/var/www/html/"
-      - "~/phptest/php.ini:/usr/local/etc/php/conf.d/php.ini"
+      - "~/wildernessCreate/src/:/var/www/html/"
+      - "~/wildernessCreate/php.ini:/usr/local/etc/php/conf.d/php.ini"
     ports:
       - "8082:80"
   mysql-server:
@@ -16,8 +16,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: super03
     volumes:
-      - ~/phptest/mysqldata:/var/lib/mysql
-      - ~/phptest/sqlScripts:/sqlScripts
+      - ~/wildernessCreate/mysqldata:/var/lib/mysql
+      - ~/wildernessCreate/sqlScripts:/sqlScripts
     ports:
       - "3306:3306"
 

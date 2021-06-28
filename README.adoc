@@ -2,9 +2,9 @@
 
 == Building using individual docker containers:
 
-To start MySQL container:
+To login to MySQL container:
 ```
-./start_mysql
+docker exec -it app_mysql-server_1 /bin/bash
 ```
 
 Setup MySQL Databases, Tables and Users:
@@ -30,7 +30,12 @@ To start PHPMyAdmin container:
 
 To start containers:
 ```
-docker-compose up -d
+docker-compose -p app up -d
+```
+
+To stop containers:
+```
+docker-compose -p app down
 ```
 
 To use phpmyadmin in browser:
