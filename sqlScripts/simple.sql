@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS phptest;
-CREATE DATABASE phptest;
-USE phptest;
+DROP DATABASE IF EXISTS wilderness;
+CREATE DATABASE wilderness;
+USE wilderness;
 
 CREATE TABLE `task` (
    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -9,12 +9,13 @@ CREATE TABLE `task` (
    `survival` BOOLEAN,
    `city` BOOLEAN,
    `homestead` BOOLEAN,
-   `order` int(10) unsigned DEFAULT NULL,
-   `group` varchar(30) DEFAULT NULL,
+   `tOrder` int(10) unsigned DEFAULT NULL,
+   `tGroup` varchar(40) DEFAULT NULL,
    `user_author` varchar(40) DEFAULT 'TheGuy',
    `purpose` text DEFAULT NULL,
    `instructions` text DEFAULT NULL,
    `image` VARCHAR(255) DEFAULT '',
+   INDEX (`tGroup`),
    PRIMARY KEY (`id`)
 ) ENGINE InnoDB;
 
@@ -44,23 +45,7 @@ CREATE TABLE `supply` (
    PRIMARY KEY (`id`)
 ) ENGINE InnoDB;
 
-CREATE TABLE survivalTasksCompleted(
-   `user_id` int unsigned,
-   `task_id` int unsigned,
-   `timeSpent` time not null,
-   `dateCompleted` datetime not null default current_timestamp,
-   PRIMARY KEY (`user_id`, `task_id`)
-) ENGINE InnoDB;
-
-CREATE TABLE homesteadTasksCompleted(
-   `user_id` int unsigned,
-   `task_id` int unsigned,
-   `timeSpent` time not null,
-   `dateCompleted` datetime not null default current_timestamp,
-   PRIMARY KEY (`user_id`, `task_id`)
-) ENGINE InnoDB;
-
-CREATE TABLE cityTasksCompleted(
+CREATE TABLE taskCompletion(
    `user_id` int unsigned,
    `task_id` int unsigned,
    `timeSpent` time not null,
@@ -112,46 +97,30 @@ BEGIN
     END IF;
 END //
 
-CREATE PROCEDURE getNextSurvivalTask(IN u1 VARCHAR(50))
+CREATE PROCEDURE createNewTask(IN title VARCHAR(255), IN tech VARCHAR(150), IN orderNo INT, IN purpose TEXT, IN instruction TEXT)
 BEGIN
-    SELECT * FROM task WHERE survival = (SELECT survival FROM task WHERE id = (SELECT task_id FROM survivalTasksCompleted WHERE user_id = (SELECT id FROM user WHERE username = u1) AND dateCompleted = (SELECT MAX(dateCompleted)))) + 1;
+    UPDATE task SET `tOrder` = `tOrder` + 1 WHERE `tOrder` >= orderNo;
+    INSERT INTO task VALUES (0, title, tech, 1, 1, 1, orderNo, 'TheGuy', purpose, instruction, null);
 END //
 
-CREATE PROCEDURE getNextHomesteadTask(IN u1 VARCHAR(50))
+CREATE PROCEDURE getNextTask(IN u1 VARCHAR(50))
 BEGIN
-    SELECT * FROM task WHERE homestead = (SELECT homestead FROM task WHERE id = (SELECT task_id FROM survivalTasksCompleted WHERE user_id = (SELECT id FROM user WHERE username = u1) AND dateCompleted = (SELECT MAX(dateCompleted)))) + 1;
-END //
-
-CREATE PROCEDURE getNextCityTask(IN u1 VARCHAR(50))
-BEGIN
-    SELECT * FROM task WHERE city = (SELECT city FROM task WHERE id = (SELECT task_id FROM survivalTasksCompleted WHERE user_id = (SELECT id FROM user WHERE username = u1) AND dateCompleted = (SELECT MAX(dateCompleted)))) + 1;
+    SELECT * FROM task WHERE id =
+        (SELECT task_id FROM taskCompletion WHERE user_id =
+            (SELECT id FROM user WHERE username = u1) AND dateCompleted =
+                (SELECT MAX(dateCompleted))) + 1;
 END //
 
 CREATE PROCEDURE getTasks(IN myOffset int, IN amount int)
 BEGIN
     SELECT * FROM task LIMIT myOffset, amount;
 end //
-
-CREATE PROCEDURE getSurvivalTasks(IN myOffset int, IN amount int)
-BEGIN
-   SELECT * FROM task WHERE survival = TRUE ORDER BY survival LIMIT myOffset, amount;
-END //
-
-CREATE PROCEDURE getHomesteadTasks(IN myOffset int, IN amount int)
-BEGIN
-    SELECT * FROM task WHERE homestead = TRUE ORDER BY homestead LIMIT myOffset, amount;
-END //
-
-CREATE PROCEDURE getCityTasks(IN myOffset int, IN amount int)
-BEGIN
-    SELECT * FROM task WHERE city = TRUE LIMIT myOffset, amount;
-END //
 DELIMITER ;
 
 CREATE ROLE IF NOT EXISTS 'app', 'developer','administrator';
 GRANT ALL ON *.* TO 'administrator';
-GRANT INSERT, UPDATE, DELETE ON phptest.* TO 'developer';
-GRANT EXECUTE ON phptest.* TO 'app';
+GRANT INSERT, UPDATE, DELETE ON wilderness.* TO 'developer';
+GRANT EXECUTE ON wilderness.* TO 'app';
 CREATE USER IF NOT EXISTS 'jared'@'localhost' IDENTIFIED BY 'super03';
 CREATE USER IF NOT EXISTS 'app'@'localhost' IDENTIFIED BY 'password';
 GRANT 'app' TO 'app'@'localhost';
