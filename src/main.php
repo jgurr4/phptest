@@ -48,8 +48,8 @@ $mysqli = $conn->sendMysqli();
 
 <div id="nextTask">
     <h3>Next Task for you to complete:</h3>
-    <!--    FIXME: Somehow I need to get username from cookie to input for the stored procedure call here.-->
-    <?php $taskRes = $mysqli->query('CALL getNextTask("TheGuy")');
+    <?php $user = $_COOKIE['username'];  // Retrieves username of user that just logged in and use that to pull up the user next task.
+    $taskRes = $mysqli->query('CALL getNextTask("' . $user . '")');
     $row = $taskRes->fetch_assoc(); ?>
     <p><?php echo $row['title']; ?></p>
     <img src="/images/<?php echo $row['image']; ?>" width="200px" height="200px">
