@@ -55,3 +55,4 @@ build
 **/mysqldata
 **/mysql-data
 **/config.php
+src/images

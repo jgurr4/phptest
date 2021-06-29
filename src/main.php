@@ -25,18 +25,28 @@ $mysqli = $conn->sendMysqli();
 <!--16px default browser font size = 1 em-->
 <svg id="fullSvg" width="86vw" height="80vh" viewbox="0 0 1500 700"
      style="margin: .4in auto; border:1vw black solid; display:block;">
+    <defs>
+        <pattern id="techImage" x="0%" y="0%" height="100%" width="100%"
+                 viewBox="0 0 512 512">
+            <image x="0%" y="0%" width="512" height="512" href="/images/campfire.png"></image>
+        </pattern>
+        <pattern id="taskImage" x="0%" y="0%" height="100%" width="100%"
+                 viewBox="0 0 200 200">
+            <image x="0%" y="0%" width="200" height="200" href="/images/foraging.png"></image>
+        </pattern>
+    </defs>
     <defs>   <!-- <defs> will hide the code inside it until the code inside is called with <use> -->
         <g id="tree">
             <g id="node">
                 <rect x="152" y="320" width="328" height="80" fill="#111111" rx="16" ry="16"></rect>
                 <text x="232" y="344" fill="#aaaaaa">Technology Name</text>
                 <rect x="232" y="352" width="248" height="48" fill="#333333" rx="16" ry="16"></rect>
-                <circle r="29" cx="192" cy="360" fill="#558473"></circle>    <!-- Tech img -->
-                <circle r="21" cx="259" cy="376" fill="#558473"></circle> <!-- mini circles/tasks img -->
-                <circle r="21" cx="307" cy="376" fill="#558473"></circle>
-                <circle r="21" cx="355" cy="376" fill="#558473"></circle>
-                <circle r="21" cx="403" cy="376" fill="#558473"></circle>
-                <circle r="21" cx="451" cy="376" fill="#558473"></circle>
+                <circle r="29" cx="192" cy="360" fill="url(#techImage)" stroke="gold" stroke-width="0.2%"></circle>    <!-- Tech img -->
+                <circle r="21" cx="259" cy="376" fill="url(#taskImage)"></circle> <!-- mini circles/tasks img -->
+                <circle r="21" cx="307" cy="376" fill="url(#taskImage)"></circle>
+                <circle r="21" cx="355" cy="376" fill="url(#taskImage)"></circle>
+                <circle r="21" cx="403" cy="376" fill="url(#taskImage)"></circle>
+                <circle r="21" cx="451" cy="376" fill="url(#taskImage)"></circle>
             </g>
             <path></path>
             <use href="#node" x="416" y="144"></use>
@@ -131,7 +141,7 @@ $mysqli->next_result();
 
 </script>
 <script>
-    //svg dragging api:
+    //svg dragging function:
     const svg = document.getElementById('mySvg');
     const fullSvg = document.getElementById('fullSvg');
     let svgX = svg.getAttributeNS(null, 'x');

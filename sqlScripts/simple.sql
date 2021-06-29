@@ -4,7 +4,7 @@ USE wilderness;
 
 SOURCE /sqlScripts/backup.sql;
 
-CREATE TABLE `task` (
+/*CREATE TABLE `task` (
    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
    `title` varchar(255) UNIQUE NOT NULL,
    `tech` varchar(150) not null,
@@ -64,6 +64,7 @@ CREATE TABLE `source` (
    `source5` text,
    `extraInfo` text
 ) ENGINE InnoDB;
+*/
 
 DELIMITER //
 CREATE PROCEDURE createNewUser(
@@ -117,6 +118,12 @@ CREATE PROCEDURE getTasks(IN myOffset int, IN amount int)
 BEGIN
     SELECT * FROM task LIMIT myOffset, amount;
 end //
+
+CREATE PROCEDURE addImage(IN taskTitle varchar(255), IN imageName varchar(255))
+BEGIN
+    UPDATE task SET image = imageName WHERE title = taskTitle;
+END //
+
 DELIMITER ;
 
 CREATE ROLE IF NOT EXISTS 'app', 'developer','administrator';
@@ -129,7 +136,8 @@ GRANT 'app' TO 'app'@'localhost';
 GRANT 'administrator' TO 'jared'@'localhost';
 FLUSH PRIVILEGES;
 
-LOAD DATA LOCAL INFILE './sqlScripts/insertTasks.csv' INTO TABLE task FIELDS TERMINATED BY ',' IGNORE 1 LINES;
+# LOAD DATA LOCAL INFILE './sqlScripts/insertTasks.csv' INTO TABLE task FIELDS TERMINATED BY ',' IGNORE 1 LINES;
+
 /* NOTE: You don't need to use quotes around strings or temporal data types in .csv files. Just make sure to escape extra commas with \,
    If you do use quotes, those will appear in the database, which is not what you want. You also do not have to escape quotes inside strings
    such as 'don\'t' since you're not using quotes to specify the start and end of each value.
