@@ -54,16 +54,17 @@
             $("#stage").load('/mysqlLogin.php', {
                 "uname": uname,
                 "pass": pass,
-            }); //FIXME: Currently, this runs asynchronously and never gets called. I need to figure out how to use async/await here.
-            if ($("#loginResult").html() === 'success') {
-                let curDate = new Date();
-                curDate.setDate(curDate.getDate() + 1);
-                let date = curDate.toUTCString();
-                document.cookie = "username=" + uname + "; expires=" + date + "; path=/";
-                $(window).attr('location','/main.php');
-            } else {
-                $(".input").val(''); // clears the text inside each input text box.
-            }
+            }, function () {  // Complete function runs as soon as .load completes. It checks if login successful and if so, redirects user.
+                if ($("#loginResult").html() === 'success') {
+                    let curDate = new Date();
+                    curDate.setDate(curDate.getDate() + 1);
+                    let date = curDate.toUTCString();
+                    document.cookie = "username=" + uname + "; expires=" + date + "; path=/";
+                    $(window).attr('location','/main.php');
+                } else {
+                    $(".input").val(''); // clears the text inside each input text box.
+                }
+            });
         });
 
     // This function creates a new user in table after user hits the submit button on the createAccount form.
