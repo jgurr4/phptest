@@ -40,15 +40,14 @@
 </div>
 
 <script type="text/javascript" language="JavaScript">
+    // This checks for cookies. If a user has logged in before, then a cookie should exist and this will redirect them.
     $(document).ready(function () {
         let decodedCookie = decodeURIComponent(document.cookie);
         if (decodedCookie.search("username") > -1) {
             $(window).attr('location', '/main.php');
         }
-    })
 
     // This function checks to see if user exists in table, then if successful will take user to the main page.
-    $(document).ready(function () {
         $("#loginDriver").click(function (event) {
             let uname = $("#username").val();
             let pass = $("#passwordCheck").val();
@@ -66,10 +65,8 @@
                 $(".input").val(''); // clears the text inside each input text box.
             }
         });
-    });
 
     // This function creates a new user in table after user hits the submit button on the createAccount form.
-    $(document).ready(function () {
         $("#newAcctDriver").click(function (event) {
             let name = $("#name").val();
             let uid = $("#uid").val();
@@ -85,10 +82,8 @@
             });
             $(".input").val(''); // clears the text inside each input text box.
         });
-    });
 
     // This function checks to see if email/password combo exists in table, then if successful will allow user to reset their password.
-    $(document).ready(function () {
         $("#passResetDriver").click(function (event) {
             let uname = $("#usernameCheck").val();
             let email = $("#emailCheck").val();
@@ -98,34 +93,26 @@
             });
             $(".input").val(''); // clears the text inside each input text box.
         });
-    });
 
     // This function closes login form and opens the createAccount form.
-    $(document).ready(function(){
         $("#getCreateAcct").click(function(){
             $("#login").toggle();
             $("#createAccount").toggle();
         });
-    });
 
     // This function closes the createAccount form and opens the login form.
-    $(document).ready(function(){
         $("#getLogin").click(function(){
             $("#login").toggle();
             $("#createAccount").toggle();
         });
-    });
 
     // This function closes the login form and opens the forgot password form.
-    $(document).ready(function(){
         $("#getResetPass").click(function(){
             $("#login").toggle();
             $("#forgotPass").toggle();
         });
-    });
 
     // This function closes the forgotPassword form and opens the login form.
-    $(document).ready(function(){
         $("#passGetLogin").click(function(){
             $("#login").toggle();
             $("#forgotPass").toggle();

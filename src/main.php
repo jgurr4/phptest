@@ -25,7 +25,7 @@ $mysqli = $conn->sendMysqli();
 <!--16px default browser font size = 1 em-->
 <svg id="fullSvg" width="86vw" height="80vh" viewbox="0 0 1500 700"
      style="margin: .4in auto; border:1vw black solid; display:block;">
-    <defs>   <!-- This means to hide the code inside it until the code inside is called with <use> -->
+    <defs>   <!-- <defs> will hide the code inside it until the code inside is called with <use> -->
         <g id="tree">
             <g id="node">
                 <rect x="152" y="320" width="328" height="80" fill="#111111" rx="16" ry="16"></rect>
@@ -49,7 +49,7 @@ $mysqli = $conn->sendMysqli();
 <div id="nextTask">
     <h3>Next Task for you to complete:</h3>
     <!--    FIXME: Somehow I need to get username from cookie to input for the stored procedure call here.-->
-    <?php $taskRes = $mysqli->query('CALL getNextSurvivalTask("TheGuy")');
+    <?php $taskRes = $mysqli->query('CALL getNextTask("TheGuy")');
     $row = $taskRes->fetch_assoc(); ?>
     <p><?php echo $row['title']; ?></p>
     <img src="/images/<?php echo $row['image']; ?>" width="200px" height="200px">
@@ -85,7 +85,7 @@ $mysqli = $conn->sendMysqli();
             <td><?php echo $row['id'] ?></td>
             <td><?php echo $row['title'] ?></td>
             <td><?php echo $row['tech'] ?></td>
-            <td><?php echo $row['order'] ?></td>
+            <td><?php echo $row['tOrder'] ?></td>
             <td><?php echo $row['user_author'] ?></td>
             <td><?php echo $row['purpose'] ?></td>
             <td><?php echo $row['instructions'] ?></td>
@@ -108,28 +108,20 @@ $mysqli->next_result();
             $("#survivalTable").toggle();
             //put code in here to change all the page info to the survival type.
         })
-    })
 
-    $(document).ready(function () {
         $("#city").click(function (event) {
             //put code in here to change all the page info to the city type.
         })
-    })
 
-    $(document).ready(function () {
         $("#homestead").click(function (event) {
             //put code in here to change all the page info to the homestead type.
         })
-    })
 
-    $(document).ready(function () {
         $("#profile").click(function (event) {
             $(window).attr('location', '/profile.php');
         });
-    });
 
-    //logout function destroys all existing cookies.
-    $(document).ready(function () {
+        // logout function destroys all existing cookies.
         $("#logout").click(function (event) {
             document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             $(window).attr('location', '/index.php');

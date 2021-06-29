@@ -2,6 +2,8 @@ DROP DATABASE IF EXISTS wilderness;
 CREATE DATABASE wilderness;
 USE wilderness;
 
+SOURCE /sqlScripts/backup.sql;
+
 CREATE TABLE `task` (
    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
    `title` varchar(255) UNIQUE NOT NULL,
