@@ -56,4 +56,4 @@ build
 **/mysql-data
 **/config.php
 src/images
-sqlScripts/backup.sql
+**/backup.sql
