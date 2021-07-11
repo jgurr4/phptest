@@ -11,7 +11,7 @@ services:
     ports:
       - "8082:80"
   mysql-server:
-    image: mysql:8.0.0
+    image: mariadb/server
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: super03
@@ -20,7 +20,6 @@ services:
       - ~/wildernessCreate/sqlScripts:/sqlScripts
     ports:
       - "3306:3306"
-
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.1.0
     restart: always

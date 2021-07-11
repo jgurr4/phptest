@@ -1,0 +1,3 @@
+#!/bin/bash
+cp src/images/* /media/jaredgurr/'Seagate Backup Plus Drive'/wildernessBackupImages/
+echo 'images successfully backed up to Seagate Backup Plus Drive/wildernessBackupImages/'

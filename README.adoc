@@ -1,5 +1,10 @@
 = phptest
 
+== First Time setup:
+```
+vi src/config.php    //Add credentials for host, user, pass, db
+```
+
 == Building using individual docker containers:
 
 To login to MySQL container:
