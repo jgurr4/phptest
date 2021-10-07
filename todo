@@ -56,7 +56,7 @@ Simple version:
 
 //NOTE: FL means (F)inish (L)ater. I have to look up certain things and go back to them later before I can insert them or if I insert them, so I can update them later.
 
-INSERT INTO user VALUES (0, 'TheGuy','jared gurr',14781234,'something@gmail.com',null,default,default);
+INSERT INTO user VALUES (0, 'TheGuy','j',14781234,'something@mail.com',null,default,default);
 
 INSERT INTO task VALUES (0, 'Make a stone axehead',default,default,default,'TheGuy','Requirement for making stone axe.', 'Find a rough stone that is at least the size of two of your fists put together. Use a river or any other source of water to get the flatest surface of the rock wet. Then use some shaping stone on it, and begin rubbing the shaping stone on the wet rock. Keep rubbing until you get the shape of an axehead you want. ...FL');
 

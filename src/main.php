@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Main</title>
-    <!--    <script src="https://balkangraph.com/js/latest/OrgChart.js"></script>-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -22,7 +21,6 @@ $conn = new MysqlConnect();
 $mysqli = $conn->sendMysqli();
 ?>
 
-<!--16px default browser font size = 1 em-->
 <svg id="fullSvg" width="86vw" height="80vh" viewbox="0 0 1500 700"
      style="margin: .4in auto; border:1vw black solid; display:block;">
     <defs>
@@ -53,12 +51,12 @@ $mysqli = $conn->sendMysqli();
             <use href="#node" x="416" y="-144"></use>
         </g>
     </defs>
-    <use id="mySvg" href="#tree" x="-100" y="0"></use>  <!--This tag controls entire tree. Javascript is used on this.-->
+    <use id="mySvg" href="#tree" x="-100" y="0"></use>  <!--This tag contains entire tree. Javascript is used on this.-->
 </svg>
 
 <div id="nextTask">
     <h3>Next Task for you to complete:</h3>
-    <?php $user = $_COOKIE['username'];  // Retrieves username of user that just logged in and use that to pull up the user next task.
+    <?php $user = $_COOKIE['username'];
     $taskRes = $mysqli->query('CALL getNextTask("' . $user . '")');
     $row = $taskRes->fetch_assoc(); ?>
     <p><?php echo $row['title']; ?></p>

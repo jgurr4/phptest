@@ -14,10 +14,10 @@ services:
     image: mariadb/server
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: super03
+      MYSQL_ROOT_PASSWORD: $pass
     volumes:
       - ~/wildernessCreate/mysqldata:/var/lib/mysql
-      - ~/wildernessCreate/sqlScripts:/sqlScripts
+      - ~/wilderness-extra:/sqlScripts
     ports:
       - "3306:3306"
   phpmyadmin:
@@ -26,7 +26,7 @@ services:
     environment:
       PMA_HOST: mysql-server
       PMA_USER: root
-      PMA_PASSWORD: super03
+      PMA_PASSWORD: $pass
     ports:
       - "5000:80"
 volumes:
